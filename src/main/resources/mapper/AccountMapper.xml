@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.sjxm.springbootinit.mapper.AccountMapper">
+
+    <resultMap id="BaseResultMap" type="com.sjxm.springbootinit.model.entity.Account">
+            <id property="accountId" column="account_id" jdbcType="INTEGER"/>
+            <result property="userId" column="user_id" jdbcType="VARCHAR"/>
+            <result property="password" column="password" jdbcType="VARCHAR"/>
+            <result property="name" column="name" jdbcType="VARCHAR"/>
+            <result property="phone" column="phone" jdbcType="VARCHAR"/>
+            <result property="avatar" column="avatar" jdbcType="VARCHAR"/>
+            <result property="auth" column="auth" jdbcType="INTEGER"/>
+            <result property="schoolId" column="school_id" jdbcType="INTEGER"/>
+            <result property="classId" column="class_id" jdbcType="INTEGER"/>
+            <result property="email" column="email" jdbcType="VARCHAR"/>
+            <result property="status" column="status" jdbcType="INTEGER"/>
+            <result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>
+            <result property="createUser" column="create_user" jdbcType="VARCHAR"/>
+            <result property="updateTime" column="update_time" jdbcType="TIMESTAMP"/>
+            <result property="updateUser" column="update_user" jdbcType="VARCHAR"/>
+            <result property="deleteFlag" column="delete_flag" jdbcType="TINYINT"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        account_id,user_id,password,
+        name,phone,avatar,
+        auth,school_id,class_id,
+        email,status,create_time,
+        create_user,update_time,update_user,
+        delete_flag
+    </sql>
+</mapper>

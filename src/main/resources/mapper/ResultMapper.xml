@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.sjxm.springbootinit.mapper.ResultMapper">
+
+    <resultMap id="BaseResultMap" type="com.sjxm.springbootinit.model.entity.Result">
+            <id property="testId" column="test_id" jdbcType="INTEGER"/>
+            <result property="studentId" column="student_id" jdbcType="INTEGER"/>
+            <result property="deviceId" column="device_id" jdbcType="INTEGER"/>
+            <result property="classId" column="class_id" jdbcType="INTEGER"/>
+            <result property="schoolId" column="school_id" jdbcType="INTEGER"/>
+            <result property="result" column="result" jdbcType="DOUBLE"/>
+            <result property="level" column="level" jdbcType="INTEGER"/>
+            <result property="testTime" column="test_time" jdbcType="TIMESTAMP"/>
+            <result property="advice" column="advice" jdbcType="VARCHAR"/>
+            <result property="updateTime" column="update_time" jdbcType="TIMESTAMP"/>
+            <result property="updateUser" column="update_user" jdbcType="VARCHAR"/>
+            <result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>
+            <result property="createUser" column="create_user" jdbcType="VARCHAR"/>
+            <result property="deleteFlag" column="delete_flag" jdbcType="TINYINT"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        test_id,student_id,device_id,
+        class_id,school_id,result,
+        level,test_time,advice,
+        update_time,update_user,create_time,
+        create_user,delete_flag
+    </sql>
+</mapper>
