@@ -20,7 +20,7 @@ public class Student implements Serializable {
      * 学生id，主键
      */
     @TableId(type = IdType.AUTO)
-    private Integer studentId;
+    private Long studentId;
 
     /**
      * 学号
