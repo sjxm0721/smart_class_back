@@ -25,7 +25,7 @@ public interface ClassService extends IService<Class> {
 
     void myUpdate(MyClassDTO myClassDTO);
 
-    void delete(Integer schoolId, Integer classId);
+    void delete(Integer schoolId, Long classId);
 
     void clearTeacher(Integer classId);
 }

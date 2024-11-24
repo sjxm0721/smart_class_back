@@ -3,6 +3,7 @@ package com.sjxm.springbootinit.model.entity;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
+import lombok.Builder;
 import lombok.Data;
 
 import java.io.Serializable;
@@ -14,6 +15,7 @@ import java.util.Date;
  */
 @TableName(value ="homework")
 @Data
+@Builder
 public class Homework implements Serializable {
     /**
      * Id 主键

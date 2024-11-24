@@ -176,7 +176,7 @@ public class ClassServiceImpl extends ServiceImpl<ClassMapper, Class>
 
     @Override
     @Transactional(propagation = Propagation.REQUIRED)
-    public void delete(Integer schoolId, Integer classId) {
+    public void delete(Integer schoolId, Long classId) {
         Class myClass = this.getById(classId);
         Integer deviceNum = myClass.getDeviceNum();
         if(deviceNum>0){

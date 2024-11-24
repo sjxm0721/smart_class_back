@@ -6,13 +6,13 @@ import com.sjxm.springbootinit.model.dto.AccountDTO;
 import com.sjxm.springbootinit.model.dto.AccountPageQueryDTO;
 import com.sjxm.springbootinit.model.dto.PasswordChangeDTO;
 import com.sjxm.springbootinit.model.entity.Account;
+import com.sjxm.springbootinit.model.vo.AccountPageVO;
+import com.sjxm.springbootinit.model.vo.AccountVO;
 import com.sjxm.springbootinit.properties.JwtProperties;
 import com.sjxm.springbootinit.result.PageResult;
 import com.sjxm.springbootinit.result.Result;
 import com.sjxm.springbootinit.service.AccountService;
 import com.sjxm.springbootinit.utils.JwtUtil;
-import com.sjxm.springbootinit.model.vo.AccountPageVO;
-import com.sjxm.springbootinit.model.vo.AccountVO;
 import io.jsonwebtoken.Claims;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -34,6 +34,7 @@ public class AccountController {
 
     @Autowired
     private JwtProperties jwtProperties;
+
 
 
     @PostMapping("/login")

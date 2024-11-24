@@ -1,12 +1,19 @@
 package com.sjxm.springbootinit.controller;
 
+import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.sjxm.springbootinit.constant.MessageConstant;
+import com.sjxm.springbootinit.exception.NoEnoughAuthException;
 import com.sjxm.springbootinit.model.dto.StudentAddOrUpdateDTO;
+import com.sjxm.springbootinit.model.entity.Account;
+import com.sjxm.springbootinit.model.entity.Class;
 import com.sjxm.springbootinit.model.entity.Student;
 import com.sjxm.springbootinit.model.vo.StudentNumberAndSightVO;
 import com.sjxm.springbootinit.model.vo.StudentVO;
 import com.sjxm.springbootinit.result.Result;
+import com.sjxm.springbootinit.service.AccountService;
+import com.sjxm.springbootinit.service.ClassService;
 import com.sjxm.springbootinit.service.StudentService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -15,8 +22,11 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import javax.annotation.Resource;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Api(tags = "学生管理相关接口")
@@ -26,6 +36,12 @@ public class StudentController {
 
     @Autowired
     private StudentService studentService;
+
+    @Resource
+    private AccountService accountService;
+
+    @Resource
+    private ClassService classService;
 
     @GetMapping("/list")
     @ApiOperation("获取学生信息列表")
@@ -87,6 +103,23 @@ public class StudentController {
         StudentNumberAndSightVO studentNumberAndSightVO = studentService.studentNumberAndSight(schoolId,classId);
 
         return Result.success(studentNumberAndSightVO);
+    }
+
+    @GetMapping("/all-stu")
+    @ApiOperation("获取此教师所有的学生")
+    public Result<List<Student>> allStu(Integer accountId){
+        Account account = accountService.getById(accountId);
+        if(account.getAuth()==0){
+            throw new NoEnoughAuthException(MessageConstant.NO_ENOUGH_AUTH);
+        }
+        LambdaQueryWrapper<Class> classLambdaQueryWrapper = new LambdaQueryWrapper();
+        classLambdaQueryWrapper.eq(Class::getTeacherId,accountId);
+        List<Class> list = classService.list(classLambdaQueryWrapper);
+        Set<Long> set = list.stream().map(Class::getClassId).collect(Collectors.toSet());
+        LambdaQueryWrapper<Student> studentLambdaQueryWrapper = new LambdaQueryWrapper<>();
+        studentLambdaQueryWrapper.in(!CollUtil.isEmpty(set),Student::getClassId,set);
+        List<Student> studentList = studentService.list(studentLambdaQueryWrapper);
+        return Result.success(studentList);
     }
 
 

@@ -5,7 +5,10 @@ import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.sjxm.springbootinit.common.ErrorCode;
+import com.sjxm.springbootinit.constant.MessageConstant;
+import com.sjxm.springbootinit.exception.BaseException;
 import com.sjxm.springbootinit.exception.BusinessException;
+import com.sjxm.springbootinit.exception.SubmitNotFoundException;
 import com.sjxm.springbootinit.mapper.SubmitMapper;
 import com.sjxm.springbootinit.model.dto.SubmitQueryDTO;
 import com.sjxm.springbootinit.model.entity.Homework;
@@ -49,6 +52,9 @@ public class SubmitServiceImpl extends ServiceImpl<SubmitMapper, Submit>
     @Override
     public Submit info(Long submitId) {
         Submit submit = this.getById(submitId);
+        if(submit==null){
+            throw new SubmitNotFoundException(MessageConstant.SUBMIT_NOT_FOUND_ERROR);
+        }
         return obj2VO(submit);
     }
 }

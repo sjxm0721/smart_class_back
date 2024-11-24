@@ -5,16 +5,21 @@ import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 
+import com.sjxm.springbootinit.constant.MessageConstant;
+import com.sjxm.springbootinit.exception.NoEnoughAuthException;
 import com.sjxm.springbootinit.mapper.HomeworkMapper;
+import com.sjxm.springbootinit.model.dto.HomeworkAddDTO;
 import com.sjxm.springbootinit.model.entity.Class;
 import com.sjxm.springbootinit.model.entity.Homework;
 import com.sjxm.springbootinit.model.entity.Student;
 import com.sjxm.springbootinit.service.ClassService;
 import com.sjxm.springbootinit.service.HomeworkService;
 import com.sjxm.springbootinit.service.StudentService;
+import com.sjxm.springbootinit.utils.DateTransferUtil;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
+import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -95,6 +100,57 @@ public class HomeworkServiceImpl extends ServiceImpl<HomeworkMapper, Homework>
             homework.setStudentNotCompleted(studentNotCompleted.toString());
         }
         return homework;
+    }
+
+    @Override
+    public void add(HomeworkAddDTO homeworkAddDTO,Long accountId) {
+        if(accountId==null){
+            throw new NoEnoughAuthException(MessageConstant.NO_ENOUGH_AUTH);
+        }
+        Long id = homeworkAddDTO.getId();
+        String content = homeworkAddDTO.getContent();
+        String completeTime = homeworkAddDTO.getCompleteTime();
+        List<String> resources = homeworkAddDTO.getResources();
+        List<Long> studentIdList = homeworkAddDTO.getStudentIdList();
+        String sightedTime = homeworkAddDTO.getSightedTime();
+        String title = homeworkAddDTO.getTitle();
+        Integer type = homeworkAddDTO.getType();
+
+        Date completeDate = DateTransferUtil.transfer(LocalDateTime.parse(completeTime.replace(" ", "T")));
+        Date sightedDate = DateTransferUtil.transfer(LocalDateTime.parse(sightedTime.replace(" ", "T")));
+        StringBuilder sb = new StringBuilder();
+        resources.forEach(resource->{
+            sb.append(resource).append(" ");
+        });
+        sb.deleteCharAt(sb.length()-1);
+
+        Integer isSight = sightedDate.before(new Date())?1:0;
+
+        Homework homework = Homework.builder()
+                .teacherId(accountId)
+                .isSighted(isSight)
+                .sightedTime(sightedDate)
+                .type(type)
+                .content(content)
+                .resources(sb.toString())
+                .completeTime(completeDate)
+                .title(title).build();
+
+        if(type==0){
+            //布置给班级
+        }
+        else{
+            //布置给个人
+            StringBuilder sb2 = new StringBuilder();
+            studentIdList.forEach(studentId->{
+                sb2.append(studentId).append(",");
+            });
+            sb2.deleteCharAt(sb2.length()-1);
+            homework.setStudentIdList(sb2.toString());
+        }
+
+
+
     }
 }
 

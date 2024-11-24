@@ -23,7 +23,7 @@ public class AccountAddOrUpdateDTO implements Serializable {
 
     private String schoolName;
 
-    private Integer classId;
+    private Long classId;
 
     private String className;
 

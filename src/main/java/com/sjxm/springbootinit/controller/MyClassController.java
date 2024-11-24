@@ -1,5 +1,6 @@
 package com.sjxm.springbootinit.controller;
 
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.sjxm.springbootinit.model.dto.MyClassDTO;
 import com.sjxm.springbootinit.model.vo.MyClassVO;
 import com.sjxm.springbootinit.result.PageResult;
@@ -10,6 +11,7 @@ import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+import com.sjxm.springbootinit.model.entity.Class;
 
 import java.util.List;
 
@@ -69,7 +71,7 @@ public class MyClassController {
 
     @DeleteMapping("/delete")
     @ApiOperation("删除班级信息")
-    public Result delete(Integer schoolId,Integer classId){
+    public Result delete(Integer schoolId,Long classId){
         classService.delete(schoolId,classId);
 
         return Result.success();
@@ -81,5 +83,14 @@ public class MyClassController {
         classService.clearTeacher(classId);
 
         return Result.success();
+    }
+
+    @GetMapping("/all-class")
+    @ApiOperation("获取该教师下的所有班级")
+    public Result<List<Class>> allClass(Long accountId){
+        LambdaQueryWrapper<Class> lambdaQueryWrapper = new LambdaQueryWrapper<>();
+        lambdaQueryWrapper.eq(Class::getTeacherId,accountId);
+        List<Class> list = classService.list(lambdaQueryWrapper);
+        return Result.success(list);
     }
 }

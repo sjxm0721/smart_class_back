@@ -26,7 +26,7 @@ public class Class implements Serializable {
      * 主键，班级号
      */
     @TableId(type = IdType.AUTO)
-    private Integer classId;
+    private Long classId;
 
     /**
      * 班级名

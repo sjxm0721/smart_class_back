@@ -102,7 +102,7 @@ public class SchoolServiceImpl extends ServiceImpl<SchoolMapper, School>
         if(classListBySchoolId.size()!=0)
         {
             for (Class myClass : classListBySchoolId) {
-                Integer classId = myClass.getClassId();
+                Long classId = myClass.getClassId();
                 classService.delete(schoolId,classId);
             }
         }

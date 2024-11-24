@@ -203,7 +203,7 @@ public class AccountServiceImpl extends ServiceImpl<AccountMapper, Account>
     public void add(AccountAddOrUpdateDTO accountInfo) {
         Integer auth=accountInfo.getAuth();
         Integer schoolId= accountInfo.getSchoolId();
-        Integer classId=accountInfo.getClassId();
+        Long classId=accountInfo.getClassId();
 
         Account account=new Account();
         BeanUtils.copyProperties(accountInfo,account);
@@ -268,7 +268,7 @@ public class AccountServiceImpl extends ServiceImpl<AccountMapper, Account>
 
 
             Integer classIdOld=account.getClassId();
-            Integer classIdNew=accountInfo.getClassId();
+            Long classIdNew=accountInfo.getClassId();
 
 
             if(authOld==2&&schoolIdOld!=null){//原来是校管理员 去掉原来与学校的联系

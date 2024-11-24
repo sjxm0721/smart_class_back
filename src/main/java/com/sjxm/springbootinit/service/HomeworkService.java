@@ -1,6 +1,7 @@
 package com.sjxm.springbootinit.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.sjxm.springbootinit.model.dto.HomeworkAddDTO;
 import com.sjxm.springbootinit.model.entity.Homework;
 
 /**
@@ -12,4 +13,5 @@ public interface HomeworkService extends IService<Homework> {
 
     Homework getHomeworkTarget(Homework homework);
 
+    void add(HomeworkAddDTO homeworkAddDTO,Long accountId);
 }
