@@ -45,7 +45,7 @@ public class AccountController {
 
         //登陆成功，生产JWT令牌
         Map<String, Object> claims = new HashMap<>();
-        claims.put(JwtClaimsConstant.USER_ID,account.getUserId());
+        claims.put(JwtClaimsConstant.USER_ID,account.getAccountId());
         String token = JwtUtil.createJWT(
                 jwtProperties.getAdminSecretKey(),//密钥
                 jwtProperties.getAdminTtl(),//有效时间

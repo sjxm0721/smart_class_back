@@ -13,13 +13,14 @@ import java.util.List;
 @Data
 public class HomeworkAddDTO implements Serializable {
 
-    private Long id;
 
     private String content;
 
     private String completeTime;
 
     private List<String> resources;
+
+    private List<String> classIdList;
 
     private List<Long> studentIdList;
 

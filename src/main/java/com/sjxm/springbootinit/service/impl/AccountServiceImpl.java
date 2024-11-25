@@ -7,6 +7,7 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.sjxm.springbootinit.constant.MessageConstant;
 import com.sjxm.springbootinit.constant.PasswordConstant;
+import com.sjxm.springbootinit.context.BaseContext;
 import com.sjxm.springbootinit.exception.*;
 import com.sjxm.springbootinit.model.dto.AccountAddOrUpdateDTO;
 import com.sjxm.springbootinit.model.dto.AccountDTO;
@@ -27,6 +28,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -120,7 +122,7 @@ public class AccountServiceImpl extends ServiceImpl<AccountMapper, Account>
 
     @Override
     public Account tokenLogin(String userId) {
-        Account account = this.getByUserId(userId);
+        Account account = this.getById(userId);
         if(account == null){
             //账号不存在
             throw new AccountNotFoundException(MessageConstant.ACCOUNT_NOT_FOUND);
@@ -373,6 +375,12 @@ public class AccountServiceImpl extends ServiceImpl<AccountMapper, Account>
                 .eq(Account::getAuth,3);
 
         return this.count(lambdaQueryWrapper);
+    }
+
+    @Override
+    public Account getLoginUser() {
+        String currentId = BaseContext.getCurrentId();
+        return this.getById(Long.parseLong(currentId));
     }
 }
 

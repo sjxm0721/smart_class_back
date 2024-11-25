@@ -42,17 +42,28 @@ public class HomeworkServiceImpl extends ServiceImpl<HomeworkMapper, Homework>
     public Homework getHomeworkTarget(Homework homework) {
         int type = homework.getType();
         String[] strings = null;
-        List<Student> list = null;
+        List<Student> listStudent = null;
+        List<Class> listClass = null;
         if(type==0){
             //布置给全班
-            String target = "";
-            Long classId = homework.getClassId();
-            Class aClass = classService.getById(classId);
-            target=aClass.getClassName();
-            homework.setTarget(target);
+            String classIdList = homework.getClassIdList();
+            String[] allClassStr = new String[0];
+            if(!StrUtil.isBlankIfStr(classIdList)){
+                allClassStr = classIdList.split(",");
+            }
+            StringBuilder sb = new StringBuilder();
+            LambdaQueryWrapper<Class> classLambdaQueryWrapper = new LambdaQueryWrapper<>();
+            classLambdaQueryWrapper.in(allClassStr.length>0,Class::getClassId, allClassStr);
+            listClass = classService.list(classLambdaQueryWrapper);
+            for(int i =0;i<listClass.size();i++){
+                sb.append(listClass.get(i).getClassName()).append("、");
+            }
+            StringBuilder target = sb.deleteCharAt(sb.length() - 1);
+            homework.setTarget(target.toString());
+
             LambdaQueryWrapper<Student> studentLambdaQueryWrapper = new LambdaQueryWrapper<>();
-            studentLambdaQueryWrapper.eq(Student::getClassId,classId);
-            list = studentService.list(studentLambdaQueryWrapper);
+            studentLambdaQueryWrapper.in(!CollUtil.isEmpty(listClass),Student::getClassId,listClass);
+            listStudent = studentService.list(studentLambdaQueryWrapper);
         }
         else{
             //布置给个人
@@ -64,9 +75,9 @@ public class HomeworkServiceImpl extends ServiceImpl<HomeworkMapper, Homework>
             }
             LambdaQueryWrapper<Student> studentLambdaQueryWrapper = new LambdaQueryWrapper<>();
             studentLambdaQueryWrapper.in(allStudentStr.length>0,Student::getStudentId, allStudentStr);
-            list = studentService.list(studentLambdaQueryWrapper);
-            for(int i =0;i<list.size();i++){
-                sb.append(list.get(i).getStudentName()).append("、");
+            listStudent = studentService.list(studentLambdaQueryWrapper);
+            for(int i =0;i<listStudent.size();i++){
+                sb.append(listStudent.get(i).getStudentName()).append("、");
             }
             StringBuilder target = sb.deleteCharAt(sb.length() - 1);
             homework.setTarget(target.toString());
@@ -75,14 +86,14 @@ public class HomeworkServiceImpl extends ServiceImpl<HomeworkMapper, Homework>
         if(!StrUtil.isBlankIfStr(completedStudentId)){
             strings = completedStudentId.split(",");
         }
-        if(!CollUtil.isEmpty(list)){
+        if(!CollUtil.isEmpty(listStudent)){
             Set<Long> sets = new HashSet<>();
             if (strings != null) {
                 sets = Arrays.stream(strings).map(Long::parseLong).collect(Collectors.toSet());
             }
             StringBuilder studentCompleted = new StringBuilder();
             StringBuilder studentNotCompleted = new StringBuilder();
-            for (Student student : list) {
+            for (Student student : listStudent) {
                 if(sets.contains(student.getStudentId())){
                     studentCompleted.append(student.getStudentName()).append(",");
                 }
@@ -107,7 +118,6 @@ public class HomeworkServiceImpl extends ServiceImpl<HomeworkMapper, Homework>
         if(accountId==null){
             throw new NoEnoughAuthException(MessageConstant.NO_ENOUGH_AUTH);
         }
-        Long id = homeworkAddDTO.getId();
         String content = homeworkAddDTO.getContent();
         String completeTime = homeworkAddDTO.getCompleteTime();
         List<String> resources = homeworkAddDTO.getResources();
@@ -115,6 +125,7 @@ public class HomeworkServiceImpl extends ServiceImpl<HomeworkMapper, Homework>
         String sightedTime = homeworkAddDTO.getSightedTime();
         String title = homeworkAddDTO.getTitle();
         Integer type = homeworkAddDTO.getType();
+        List<String> classIdList = homeworkAddDTO.getClassIdList();
 
         Date completeDate = DateTransferUtil.transfer(LocalDateTime.parse(completeTime.replace(" ", "T")));
         Date sightedDate = DateTransferUtil.transfer(LocalDateTime.parse(sightedTime.replace(" ", "T")));
@@ -138,6 +149,12 @@ public class HomeworkServiceImpl extends ServiceImpl<HomeworkMapper, Homework>
 
         if(type==0){
             //布置给班级
+            StringBuilder sb2 = new StringBuilder();
+            classIdList.forEach(classId->{
+                sb2.append(classId).append(",");
+            });
+            sb2.deleteCharAt(sb2.length()-1);
+            homework.setClassIdList(sb2.toString());
         }
         else{
             //布置给个人
@@ -149,6 +166,7 @@ public class HomeworkServiceImpl extends ServiceImpl<HomeworkMapper, Homework>
             homework.setStudentIdList(sb2.toString());
         }
 
+        this.save(homework);
 
 
     }

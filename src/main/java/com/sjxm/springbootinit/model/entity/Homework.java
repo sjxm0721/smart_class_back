@@ -1,10 +1,13 @@
 package com.sjxm.springbootinit.model.entity;
 
+import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.io.Serializable;
 import java.util.Date;
@@ -16,11 +19,15 @@ import java.util.Date;
 @TableName(value ="homework")
 @Data
 @Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class Homework implements Serializable {
+
+
     /**
      * Id 主键
      */
-    @TableId
+    @TableId(type = IdType.AUTO)
     private Long id;
 
     /**
@@ -40,18 +47,18 @@ public class Homework implements Serializable {
     private Date sightedTime;
 
     /**
-     * 
+     *
      */
-    private Long classId;
+    private String classIdList;
 
     /**
-     * 
+     *
      */
     private String studentIdList;
 
     /**
      * 0-布置给全班
-1-布置给个人
+     1-布置给个人
      */
     private Integer type;
 
@@ -66,27 +73,27 @@ public class Homework implements Serializable {
     private Integer curNum;
 
     /**
-     * 
+     * 创建时间
      */
     private Date createTime;
 
     /**
-     * 
+     * 最后修改时间
      */
     private Date updateTime;
 
     /**
-     * 
+     *
      */
     private String createUser;
 
     /**
-     * 
+     *
      */
     private String updateUser;
 
     /**
-     * 
+     *
      */
     private Integer deleteFlag;
 
@@ -100,14 +107,28 @@ public class Homework implements Serializable {
      */
     private String resources;
 
+    /**
+     * 截止时间
+     */
     private Date completeTime;
 
+    /**
+     * 名称
+     */
     private String title;
+
+    /**
+     * 已完成学生id
+     */
+    private String completedStudentId;
+
+    @TableField(exist = false)
+    private static final long serialVersionUID = 1L;
+
 
     @TableField(exist = false)
     private String target;
 
-    private String completedStudentId;
 
     @TableField(exist = false)
     private String studentCompleted;
@@ -115,6 +136,4 @@ public class Homework implements Serializable {
     @TableField(exist = false)
     private String studentNotCompleted;
 
-    @TableField(exist = false)
-    private static final long serialVersionUID = 1L;
 }

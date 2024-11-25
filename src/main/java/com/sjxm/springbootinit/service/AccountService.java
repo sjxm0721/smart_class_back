@@ -9,6 +9,8 @@ import com.sjxm.springbootinit.model.entity.Account;
 import com.sjxm.springbootinit.model.vo.AccountPageVO;
 import com.sjxm.springbootinit.result.PageResult;
 
+import javax.servlet.http.HttpServletRequest;
+
 /**
 * @author sijixiamu
 * @description 针对表【account】的数据库操作Service
@@ -35,4 +37,6 @@ public interface AccountService extends IService<Account> {
     void delete(Integer accountId);
 
     long teacherNumber(Integer schoolId, Integer classId);
+
+    Account getLoginUser();
 }

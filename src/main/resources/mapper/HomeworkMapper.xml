@@ -2,14 +2,14 @@
 <!DOCTYPE mapper
         PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="generator.mapper.HomeworkMapper">
+<mapper namespace="com.sjxm.springbootinit.mapper.HomeworkMapper">
 
     <resultMap id="BaseResultMap" type="com.sjxm.springbootinit.model.entity.Homework">
             <id property="id" column="id" jdbcType="BIGINT"/>
             <result property="teacherId" column="teacher_id" jdbcType="BIGINT"/>
             <result property="isSighted" column="is_sighted" jdbcType="TINYINT"/>
             <result property="sightedTime" column="sighted_time" jdbcType="TIMESTAMP"/>
-            <result property="classId" column="class_id" jdbcType="BIGINT"/>
+            <result property="classIdList" column="class_id_list" jdbcType="VARCHAR"/>
             <result property="studentIdList" column="student_id_list" jdbcType="VARCHAR"/>
             <result property="type" column="type" jdbcType="TINYINT"/>
             <result property="totalNum" column="total_num" jdbcType="INTEGER"/>
@@ -28,10 +28,11 @@
 
     <sql id="Base_Column_List">
         id,teacher_id,is_sighted,
-        sighted_time,class_id,student_id_list,
+        sighted_time,class_id_list,student_id_list,
         type,total_num,cur_num,
         create_time,update_time,create_user,
         update_user,delete_flag,content,
-        resources
+        resources,complete_time,title,
+        completed_student_id
     </sql>
 </mapper>
