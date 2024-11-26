@@ -14,7 +14,7 @@ import java.time.LocalDateTime;
 @Builder
 public class StudentVO implements Serializable {
 
-    private Integer studentId;
+    private Long studentId;
 
     private String studentIdNumber;
 
@@ -28,9 +28,9 @@ public class StudentVO implements Serializable {
 
     private String email;
 
-    private Integer classId;
+    private Long classId;
 
-    private Integer schoolId;
+    private Long schoolId;
 
     private Integer shortSighted;
 

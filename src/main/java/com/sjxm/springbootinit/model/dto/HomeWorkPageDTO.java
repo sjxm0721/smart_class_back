@@ -17,6 +17,8 @@ public class HomeWorkPageDTO implements Serializable {
 
     private Long teacherId;//教师id
 
+    private Long studentId;
+
     private String input;//查询关键字
 
 

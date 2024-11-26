@@ -28,7 +28,7 @@ public class SightResultController {
 
     @GetMapping("/info")
     @ApiOperation("获取结果信息列表")
-    public Result<List<SightResultVO>> info(Integer classId, Integer schoolId, String select, String input){
+    public Result<List<SightResultVO>> info(Long classId, Long schoolId, String select, String input){
 
         List<SightResultVO> list = sightResultService.info(classId,schoolId,select,input);
 
@@ -63,7 +63,7 @@ public class SightResultController {
 
     @GetMapping("/resultStatus")
     @ApiOperation("获取测试结果分布")
-    public Result<List<Integer>> resultStatus(Integer schoolId,Integer classId,String timeStart,String timeEnd){
+    public Result<List<Integer>> resultStatus(Long schoolId,Long classId,String timeStart,String timeEnd){
 
         List<Integer> list = sightResultService.resultStatus(schoolId,classId,timeStart,timeEnd);
 
@@ -72,8 +72,8 @@ public class SightResultController {
 
     @PostMapping("/add")
     @ApiOperation("增加测试结果")
-    public Result<Integer> addResult(@RequestBody SightResultDTO sightResultDTO){
-        Integer testId = sightResultService.addResult(sightResultDTO);
+    public Result<Long> addResult(@RequestBody SightResultDTO sightResultDTO){
+        Long testId = sightResultService.addResult(sightResultDTO);
         return Result.success(testId);
     }
 }

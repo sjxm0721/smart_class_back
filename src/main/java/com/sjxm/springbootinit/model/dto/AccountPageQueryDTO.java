@@ -15,5 +15,5 @@ public class AccountPageQueryDTO implements Serializable {
 
     private Integer pageSize;//每页展示数据条数
 
-    private Integer schoolId;//校管理员有schoolId
+    private Long schoolId;//校管理员有schoolId
 }

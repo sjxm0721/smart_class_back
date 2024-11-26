@@ -20,7 +20,7 @@ public class School implements Serializable {
      * 学校id，主键
      */
     @TableId(type = IdType.AUTO)
-    private Integer schoolId;
+    private Long schoolId;
 
     /**
      * 
@@ -37,7 +37,7 @@ public class School implements Serializable {
      * 学校负责人的id
 
      */
-    private Integer masterId;
+    private Long masterId;
 
     /**
      * 学校设备数

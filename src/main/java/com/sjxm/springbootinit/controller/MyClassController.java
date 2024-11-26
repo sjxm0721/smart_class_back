@@ -27,7 +27,7 @@ public class MyClassController {
     @GetMapping("/info")
     @ApiOperation("根据id获取班级信息具体数据")
     //todo 方法好像存在问题
-    public Result<List<MyClassVO>> info(Integer classId){
+    public Result<List<MyClassVO>> info(Long classId){
 
         List<MyClassVO> list = classService.info(classId);
 
@@ -36,7 +36,7 @@ public class MyClassController {
 
     @GetMapping("/list")
     @ApiOperation("获取班级信息列表")
-    public Result<List<MyClassVO>> list(Integer schoolId){
+    public Result<List<MyClassVO>> list(Long schoolId){
         List<MyClassVO> list = classService.myList(schoolId);
         return Result.success(list);
     }
@@ -44,7 +44,7 @@ public class MyClassController {
 
     @GetMapping("/page")
     @ApiOperation("班级信息分页查询")
-    public Result<PageResult> page(Integer schoolId, String input, Integer currentPage, Integer pageSize){
+    public Result<PageResult> page(Long schoolId, String input, Integer currentPage, Integer pageSize){
 
         PageResult page = classService.myPage(schoolId,input,currentPage,pageSize);
 
@@ -71,7 +71,7 @@ public class MyClassController {
 
     @DeleteMapping("/delete")
     @ApiOperation("删除班级信息")
-    public Result delete(Integer schoolId,Long classId){
+    public Result delete(Long schoolId,Long classId){
         classService.delete(schoolId,classId);
 
         return Result.success();
@@ -79,7 +79,7 @@ public class MyClassController {
 
     @PutMapping("/clearTeacher")
     @ApiOperation("班级解绑教师")
-    public Result clearTeacher(Integer classId){
+    public Result clearTeacher(Long classId){
         classService.clearTeacher(classId);
 
         return Result.success();

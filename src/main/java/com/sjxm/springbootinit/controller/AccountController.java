@@ -134,7 +134,7 @@ public class AccountController {
 
     @DeleteMapping("/delete")
     @ApiOperation("删除账号")
-    public Result delete(Integer accountId){
+    public Result delete(Long accountId){
 
         accountService.delete(accountId);
         return Result.success();
@@ -142,7 +142,7 @@ public class AccountController {
 
     @GetMapping("/teacherNumber")
     @ApiOperation("查看教师数量")
-    public Result<Long> teacherNumber(Integer schoolId,Integer classId){
+    public Result<Long> teacherNumber(Long schoolId,Long classId){
         long number = accountService.teacherNumber(schoolId,classId);
 
         return Result.success(number);

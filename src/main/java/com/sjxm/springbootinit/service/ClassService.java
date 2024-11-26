@@ -15,17 +15,17 @@ import java.util.List;
 */
 public interface ClassService extends IService<Class> {
 
-    List<MyClassVO> info(Integer classId);
+    List<MyClassVO> info(Long classId);
 
-    List<MyClassVO> myList(Integer schoolId);
+    List<MyClassVO> myList(Long schoolId);
 
-    PageResult myPage(Integer schoolId, String input, Integer currentPage, Integer pageSize);
+    PageResult myPage(Long schoolId, String input, Integer currentPage, Integer pageSize);
 
     void add(MyClassDTO myClassDTO);
 
     void myUpdate(MyClassDTO myClassDTO);
 
-    void delete(Integer schoolId, Long classId);
+    void delete(Long schoolId, Long classId);
 
-    void clearTeacher(Integer classId);
+    void clearTeacher(Long classId);
 }

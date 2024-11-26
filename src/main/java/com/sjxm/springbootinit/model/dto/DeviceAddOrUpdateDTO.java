@@ -7,13 +7,13 @@ import java.io.Serializable;
 @Data
 public class DeviceAddOrUpdateDTO implements Serializable {
 
-    private Integer deviceId;
+    private Long deviceId;
 
     private String deviceName;
 
-    private Integer schoolId;
+    private Long schoolId;
 
-    private Integer classId;
+    private Long classId;
 
     private String lastRepairTime;
 

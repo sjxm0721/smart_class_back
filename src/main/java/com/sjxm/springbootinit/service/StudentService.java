@@ -15,13 +15,13 @@ import java.util.List;
 */
 public interface StudentService extends IService<Student> {
 
-    StudentVO info(Integer studentId);
+    StudentVO info(Long studentId);
 
     void add(StudentAddOrUpdateDTO studentAddOrUpdateDTO);
 
     void myUpdate(StudentAddOrUpdateDTO studentAddOrUpdateDTO);
 
-    void delete(List<Integer> ids);
+    void delete(List<Long> ids);
 
-    StudentNumberAndSightVO studentNumberAndSight(Integer schoolId, Integer classId);
+    StudentNumberAndSightVO studentNumberAndSight(Long schoolId, Long classId);
 }

@@ -12,7 +12,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 public class AccountPageVO implements Serializable {
 
-    private Integer accountId;
+    private Long accountId;
 
     private String userId;
 
@@ -26,11 +26,11 @@ public class AccountPageVO implements Serializable {
 
     private String authValue;
 
-    private Integer schoolId;
+    private Long schoolId;
 
     private String schoolName;
 
-    private Integer classId;
+    private Long classId;
 
     private String className;
 

@@ -7,7 +7,7 @@ import java.io.Serializable;
 @Data
 public class SchoolDTO implements Serializable {
 
-    private Integer schoolId;
+    private Long schoolId;
 
     private String schoolName;
 

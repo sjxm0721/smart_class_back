@@ -56,8 +56,8 @@ public class AccountServiceImpl extends ServiceImpl<AccountMapper, Account>
     }
 
     private AccountPageVO obj2PageVO(Account account){
-        Integer schoolId = account.getSchoolId();
-        Integer classId = account.getClassId();
+        Long schoolId = account.getSchoolId();
+        Long classId = account.getClassId();
         Integer auth = account.getAuth();
         Integer status = account.getStatus();
         AccountPageVO accountPageVO = new AccountPageVO();
@@ -204,7 +204,7 @@ public class AccountServiceImpl extends ServiceImpl<AccountMapper, Account>
     @Transactional
     public void add(AccountAddOrUpdateDTO accountInfo) {
         Integer auth=accountInfo.getAuth();
-        Integer schoolId= accountInfo.getSchoolId();
+        Long schoolId= accountInfo.getSchoolId();
         Long classId=accountInfo.getClassId();
 
         Account account=new Account();
@@ -251,7 +251,7 @@ public class AccountServiceImpl extends ServiceImpl<AccountMapper, Account>
     @Override
     @Transactional
     public void myUpdate(AccountAddOrUpdateDTO accountInfo) {
-        Integer accountId=accountInfo.getAccountId();
+        Long accountId=accountInfo.getAccountId();
 
         Account account = this.getById(accountId);
 
@@ -265,11 +265,11 @@ public class AccountServiceImpl extends ServiceImpl<AccountMapper, Account>
             Integer authOld=account.getAuth();
             Integer authNew=accountInfo.getAuth();
 
-            Integer schoolIdOld=account.getSchoolId();
-            Integer schoolIdNew=accountInfo.getSchoolId();
+            Long schoolIdOld=account.getSchoolId();
+            Long schoolIdNew=accountInfo.getSchoolId();
 
 
-            Integer classIdOld=account.getClassId();
+            Long classIdOld=account.getClassId();
             Long classIdNew=accountInfo.getClassId();
 
 
@@ -331,14 +331,14 @@ public class AccountServiceImpl extends ServiceImpl<AccountMapper, Account>
 
     @Override
     @Transactional
-    public void delete(Integer accountId) {
+    public void delete(Long accountId) {
         Account account = this.getById(accountId);
         Integer auth = account.getAuth();
         if(auth==1){
             throw new NoEnoughAuthException(MessageConstant.NO_ENOUGH_AUTH);
         }
         if(auth==2){
-            Integer schoolId = account.getSchoolId();
+            Long schoolId = account.getSchoolId();
             //校管理员
             if(schoolId!=null)
             {
@@ -351,7 +351,7 @@ public class AccountServiceImpl extends ServiceImpl<AccountMapper, Account>
             }
         }
         if(auth==3){
-            Integer classId = account.getClassId();
+            Long classId = account.getClassId();
             //教师
             if(classId!=null)
             {
@@ -367,7 +367,7 @@ public class AccountServiceImpl extends ServiceImpl<AccountMapper, Account>
     }
 
     @Override
-    public long teacherNumber(Integer schoolId, Integer classId) {
+    public long teacherNumber(Long schoolId, Long classId) {
 
         LambdaQueryWrapper<Account> lambdaQueryWrapper = new LambdaQueryWrapper<>();
         lambdaQueryWrapper.eq(schoolId!=null,Account::getSchoolId,schoolId)

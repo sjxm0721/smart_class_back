@@ -7,9 +7,9 @@ import java.io.Serializable;
 @Data
 public class MyClassDTO implements Serializable {
 
-    private Integer classId;
+    private Long classId;
 
-    private Integer schoolId;
+    private Long schoolId;
 
     private String className;
 }

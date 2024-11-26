@@ -14,9 +14,9 @@ import java.util.List;
 */
 public interface ResultService extends IService<Result> {
 
-    List<SightResultVO> info(Integer classId, Integer schoolId, String select, String input);
+    List<SightResultVO> info(Long classId, Long schoolId, String select, String input);
 
-    List<Integer> resultStatus(Integer schoolId, Integer classId, String timeStart, String timeEnd);
+    List<Integer> resultStatus(Long schoolId, Long classId, String timeStart, String timeEnd);
 
-    Integer addResult(SightResultDTO sightResultDTO);
+    Long addResult(SightResultDTO sightResultDTO);
 }

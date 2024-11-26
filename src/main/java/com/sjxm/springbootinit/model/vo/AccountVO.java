@@ -13,7 +13,7 @@ import java.io.Serializable;
 @NoArgsConstructor
 @Builder
 public class AccountVO implements Serializable {
-    private Integer accountId;
+    private Long accountId;
 
     private String userId;
 
@@ -21,9 +21,9 @@ public class AccountVO implements Serializable {
 
     private Integer auth;//权限
 
-    private  Integer schoolId;
+    private  Long schoolId;
 
-    private Integer classId;
+    private Long classId;
 
     private String phone;
 

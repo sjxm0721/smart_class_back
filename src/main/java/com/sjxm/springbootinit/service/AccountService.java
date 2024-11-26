@@ -34,9 +34,9 @@ public interface AccountService extends IService<Account> {
 
     void myUpdate(AccountAddOrUpdateDTO accountInfo);
 
-    void delete(Integer accountId);
+    void delete(Long accountId);
 
-    long teacherNumber(Integer schoolId, Integer classId);
+    long teacherNumber(Long schoolId, Long classId);
 
     Account getLoginUser();
 }

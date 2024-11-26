@@ -13,7 +13,7 @@ import java.io.Serializable;
 @Builder
 public class DeviceTestNumber implements Serializable {
 
-    private Integer deviceId;
+    private Long deviceId;
 
     private Integer deviceUsedNum;
 }

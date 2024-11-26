@@ -6,7 +6,7 @@ import java.io.Serializable;
 
 @Data
 public class DevicePageQueryDTO implements Serializable {
-    private Integer schoolId;
+    private Long schoolId;
 
     private Integer inUse;
 

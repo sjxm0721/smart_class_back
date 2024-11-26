@@ -23,7 +23,7 @@ public class Device implements Serializable {
 
      */
     @TableId(type = IdType.AUTO)
-    private Integer deviceId;
+    private Long deviceId;
 
     /**
      * 设备名
@@ -33,12 +33,12 @@ public class Device implements Serializable {
     /**
      * 
      */
-    private Integer schoolId;
+    private Long schoolId;
 
     /**
      * 
      */
-    private Integer classId;
+    private Long classId;
 
     /**
      * 测试数量

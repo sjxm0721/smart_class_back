@@ -1,8 +1,9 @@
 package com.sjxm.springbootinit.aop;
 
 import com.sjxm.springbootinit.annotation.AuthCheck;
-import com.sjxm.springbootinit.common.ErrorCode;
-import com.sjxm.springbootinit.exception.BusinessException;
+import com.sjxm.springbootinit.constant.MessageConstant;
+import com.sjxm.springbootinit.exception.AccountLockedException;
+import com.sjxm.springbootinit.exception.NoEnoughAuthException;
 import com.sjxm.springbootinit.model.entity.Account;
 import com.sjxm.springbootinit.model.enums.AccountRoleEnum;
 import com.sjxm.springbootinit.service.AccountService;
@@ -44,12 +45,12 @@ public class AuthInterceptor {
         if (StringUtils.isNotBlank(mustRole)) {
             AccountRoleEnum mustAccountRoleEnum = AccountRoleEnum.getEnumByValue(mustRole);
             if (mustAccountRoleEnum == null) {
-                throw new BusinessException(ErrorCode.NO_AUTH_ERROR);
+                throw new NoEnoughAuthException(MessageConstant.NO_ENOUGH_AUTH);
             }
             Integer auth = account.getAuth();
             // 如果被封号，直接拒绝
             if(!Objects.equals(mustAccountRoleEnum.getValue(), auth)){
-                throw new BusinessException(ErrorCode.NO_AUTH_ERROR);
+                throw new AccountLockedException(MessageConstant.ACCOUNT_LOCKED);
             }
         }
         // 通过权限校验，放行

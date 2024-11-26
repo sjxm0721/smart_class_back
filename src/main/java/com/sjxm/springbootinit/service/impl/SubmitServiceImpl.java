@@ -1,13 +1,7 @@
 package com.sjxm.springbootinit.service.impl;
 
-import cn.hutool.core.collection.CollUtil;
-import cn.hutool.core.util.StrUtil;
-import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.sjxm.springbootinit.common.ErrorCode;
 import com.sjxm.springbootinit.constant.MessageConstant;
-import com.sjxm.springbootinit.exception.BaseException;
-import com.sjxm.springbootinit.exception.BusinessException;
 import com.sjxm.springbootinit.exception.SubmitNotFoundException;
 import com.sjxm.springbootinit.mapper.SubmitMapper;
 import com.sjxm.springbootinit.model.dto.SubmitQueryDTO;
@@ -19,8 +13,6 @@ import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 import java.util.List;
-import java.util.Set;
-import java.util.stream.Collectors;
 
 /**
 * @author sijixiamu

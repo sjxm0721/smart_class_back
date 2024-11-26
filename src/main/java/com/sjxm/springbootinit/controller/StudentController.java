@@ -65,7 +65,7 @@ public class StudentController {
 
     @GetMapping("/info")
     @ApiOperation("根据id获取学生信息")
-    public Result<StudentVO> info(Integer studentId){
+    public Result<StudentVO> info(Long studentId){
         StudentVO studentVO = studentService.info(studentId);
         return Result.success(studentVO);
     }
@@ -90,7 +90,7 @@ public class StudentController {
 
     @DeleteMapping("/delete")
     @ApiOperation("批量删除学生")
-    public Result delete(@RequestParam List<Integer> ids){
+    public Result delete(@RequestParam List<Long> ids){
 
         studentService.delete(ids);
         return Result.success();
@@ -99,7 +99,7 @@ public class StudentController {
 
     @GetMapping("/studentNumberAndSight")
     @ApiOperation("获取学生数量")
-    public Result<StudentNumberAndSightVO> studentNumberAndSight(Integer schoolId, Integer classId){
+    public Result<StudentNumberAndSightVO> studentNumberAndSight(Long schoolId, Long classId){
         StudentNumberAndSightVO studentNumberAndSightVO = studentService.studentNumberAndSight(schoolId,classId);
 
         return Result.success(studentNumberAndSightVO);
@@ -107,7 +107,7 @@ public class StudentController {
 
     @GetMapping("/all-stu")
     @ApiOperation("获取此教师所有的学生")
-    public Result<List<Student>> allStu(Integer accountId){
+    public Result<List<Student>> allStu(Long accountId){
         Account account = accountService.getById(accountId);
         if(account.getAuth()==0){
             throw new NoEnoughAuthException(MessageConstant.NO_ENOUGH_AUTH);

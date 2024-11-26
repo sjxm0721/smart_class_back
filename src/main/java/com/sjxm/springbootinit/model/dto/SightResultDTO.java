@@ -7,7 +7,7 @@ import java.io.Serializable;
 @Data
 public class SightResultDTO implements Serializable {
 
-    private Integer testId;
+    private Long testId;
 
     private Double result;
 
@@ -15,7 +15,7 @@ public class SightResultDTO implements Serializable {
 
     private String advice;
 
-    private Integer deviceId;
+    private Long deviceId;
 
-    private Integer studentId;
+    private Long studentId;
 }

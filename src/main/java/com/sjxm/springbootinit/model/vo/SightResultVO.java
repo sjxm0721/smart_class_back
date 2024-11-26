@@ -14,23 +14,23 @@ import java.time.LocalDateTime;
 @Builder
 public class SightResultVO implements Serializable {
 
-    private Integer testId;
+    private Long testId;
 
-    private Integer studentId;
+    private Long studentId;
 
     private String studentName;
 
-    private Integer classId;
+    private Long classId;
 
     private String className;
 
-    private Integer schoolId;
+    private Long schoolId;
 
     private String schoolName;
 
     private String phone;
 
-    private Integer deviceId;
+    private Long deviceId;
 
     private String deviceName;
 

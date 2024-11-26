@@ -7,7 +7,7 @@ import java.io.Serializable;
 @Data
 public class AccountAddOrUpdateDTO implements Serializable {
 
-    private Integer accountId;
+    private Long accountId;
 
     private String userId;
 
@@ -19,7 +19,7 @@ public class AccountAddOrUpdateDTO implements Serializable {
 
     private String avatar;
 
-    private Integer schoolId;
+    private Long schoolId;
 
     private String schoolName;
 

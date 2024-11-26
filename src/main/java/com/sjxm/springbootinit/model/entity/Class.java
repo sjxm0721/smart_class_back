@@ -36,12 +36,12 @@ public class Class implements Serializable {
     /**
      * 所属学校
      */
-    private Integer schoolId;
+    private Long schoolId;
 
     /**
      * 班主任id
      */
-    private Integer teacherId;
+    private Long teacherId;
 
     /**
      * 设备数量

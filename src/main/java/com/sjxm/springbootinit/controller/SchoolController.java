@@ -50,7 +50,7 @@ public class SchoolController {
 
     @DeleteMapping("/delete")
     @ApiOperation("删除学校")
-    public Result delete(Integer schoolId){
+    public Result delete(Long schoolId){
 
         schoolService.delete(schoolId);
         return Result.success();
@@ -71,7 +71,7 @@ public class SchoolController {
 
     @GetMapping("/search/{schoolId}")
     @ApiOperation("根据id查询学校信息")
-    public Result<SchoolVO> searchBySchoolId(@PathVariable Integer schoolId){
+    public Result<SchoolVO> searchBySchoolId(@PathVariable Long schoolId){
 
 
         SchoolVO schoolVO = schoolService.searchBySchoolId(schoolId);

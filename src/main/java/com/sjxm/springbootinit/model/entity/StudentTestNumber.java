@@ -13,7 +13,7 @@ import java.io.Serializable;
 @Builder
 public class StudentTestNumber implements Serializable {
 
-    private Integer studentId;
+    private Long studentId;
 
     private Integer studentUsedNum;
 }

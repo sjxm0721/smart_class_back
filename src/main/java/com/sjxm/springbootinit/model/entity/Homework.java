@@ -18,12 +18,10 @@ import java.util.Date;
  */
 @TableName(value ="homework")
 @Data
-@Builder
-@NoArgsConstructor
 @AllArgsConstructor
+@NoArgsConstructor
+@Builder
 public class Homework implements Serializable {
-
-
     /**
      * Id 主键
      */
@@ -31,46 +29,9 @@ public class Homework implements Serializable {
     private Long id;
 
     /**
-     * 作业布置老师id
-     */
-    private Long teacherId;
-
-    /**
-     * 是否可见
-
-     */
-    private Integer isSighted;
-
-    /**
      * 可见时间
      */
     private Date sightedTime;
-
-    /**
-     *
-     */
-    private String classIdList;
-
-    /**
-     *
-     */
-    private String studentIdList;
-
-    /**
-     * 0-布置给全班
-     1-布置给个人
-     */
-    private Integer type;
-
-    /**
-     * 需要提交总数
-     */
-    private Integer totalNum;
-
-    /**
-     * 当前提交数
-     */
-    private Integer curNum;
 
     /**
      * 创建时间
@@ -83,17 +44,17 @@ public class Homework implements Serializable {
     private Date updateTime;
 
     /**
-     *
+     * 
      */
     private String createUser;
 
     /**
-     *
+     * 
      */
     private String updateUser;
 
     /**
-     *
+     * 
      */
     private Integer deleteFlag;
 
@@ -118,22 +79,32 @@ public class Homework implements Serializable {
     private String title;
 
     /**
-     * 已完成学生id
+     * 课程id
      */
-    private String completedStudentId;
+    private Long subjectId;
 
     @TableField(exist = false)
     private static final long serialVersionUID = 1L;
 
+    @TableField(exist = false)
+    private Integer totalNum;
 
     @TableField(exist = false)
-    private String target;
-
-
-    @TableField(exist = false)
-    private String studentCompleted;
+    private Integer curNum;
 
     @TableField(exist = false)
-    private String studentNotCompleted;
+    private String unCompleteStudentList;
 
+    @TableField(exist = false)
+    private Long classId;
+
+    @TableField(exist = false)
+    private String className;
+
+    @TableField(exist = false)
+    private Long teacherId;
+
+    @TableField(exist = false)
+
+    private String teacherName;
 }

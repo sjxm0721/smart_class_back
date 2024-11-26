@@ -48,8 +48,8 @@ public class StudentServiceImpl extends ServiceImpl<StudentMapper, Student>
 
 
     public Student dto2Obj(StudentAddOrUpdateDTO dto){
-        Integer schoolId= dto.getSchoolId();
-        Integer classId = dto.getClassId();
+        Long schoolId= dto.getSchoolId();
+        Long classId = dto.getClassId();
         String studentIdNumber = dto.getStudentIdNumber();
 
         School school = schoolService.getById(schoolId);
@@ -80,7 +80,7 @@ public class StudentServiceImpl extends ServiceImpl<StudentMapper, Student>
     }
 
     @Override
-    public StudentVO info(Integer studentId) {
+    public StudentVO info(Long studentId) {
         Student student = this.getById(studentId);
         if(student==null){
             throw new StudentNotExistException(MessageConstant.STUDENT_NOT_EXIST);
@@ -102,9 +102,9 @@ public class StudentServiceImpl extends ServiceImpl<StudentMapper, Student>
 
     @Override
     @Transactional
-    public void delete(List<Integer> ids) {
-        Integer classId= null;
-        for (Integer id : ids) {
+    public void delete(List<Long> ids) {
+        Long classId= null;
+        for (Long id : ids) {
             Student student = this.getById(id);
             if(student==null){
                 throw new StudentNotExistException(MessageConstant.STUDENT_NOT_EXIST);
@@ -114,7 +114,7 @@ public class StudentServiceImpl extends ServiceImpl<StudentMapper, Student>
             if(deviceUsageNumber.size()!=0)
             {
                 for (DeviceTestNumber deviceTestNumber : deviceUsageNumber) {
-                    Integer deviceId = deviceTestNumber.getDeviceId();
+                    Long deviceId = deviceTestNumber.getDeviceId();
                     Integer deviceUsedNum = deviceTestNumber.getDeviceUsedNum();
                     Device device = deviceService.getById(deviceId);
                     if(device==null){
@@ -141,7 +141,7 @@ public class StudentServiceImpl extends ServiceImpl<StudentMapper, Student>
     }
 
     @Override
-    public StudentNumberAndSightVO studentNumberAndSight(Integer schoolId, Integer classId) {
+    public StudentNumberAndSightVO studentNumberAndSight(Long schoolId, Long classId) {
         LambdaQueryWrapper<Student> lambdaQueryWrapper = new LambdaQueryWrapper<>();
         lambdaQueryWrapper.eq(schoolId!=null,Student::getSchoolId,schoolId)
                 .eq(classId!=null,Student::getClassId,classId);

@@ -54,7 +54,7 @@ public class DeviceController {
 
     @PutMapping("/clearBind")
     @ApiOperation("解除设备与班级的绑定")
-    public Result clearBindWithClass(Integer deviceId){
+    public Result clearBindWithClass(Long deviceId){
         deviceService.clearBindWithClass(deviceId);
 
         return Result.success();
@@ -63,7 +63,7 @@ public class DeviceController {
 
     @DeleteMapping("/delete")
     @ApiOperation("删除设备")
-    public Result delete(Integer deviceId){
+    public Result delete(Long deviceId){
         deviceService.delete(deviceId);
 
         return Result.success();

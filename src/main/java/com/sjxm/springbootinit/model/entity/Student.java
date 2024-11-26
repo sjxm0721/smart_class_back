@@ -61,12 +61,12 @@ public class Student implements Serializable {
     /**
      * 
      */
-    private Integer classId;
+    private Long classId;
 
     /**
      * 
      */
-    private Integer schoolId;
+    private Long schoolId;
 
     /**
      * 是否近视，0不近视，1近视

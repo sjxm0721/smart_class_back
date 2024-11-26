@@ -52,10 +52,10 @@ public class ResultServiceImpl extends ServiceImpl<ResultMapper, Result>
     public SightResultVO obj2VO(Result sightResult){
         SightResultVO sightResultVO = new SightResultVO();
         BeanUtils.copyProperties(sightResult,sightResultVO);
-        Integer classIdTmp = sightResult.getClassId();
-        Integer schoolIdTmp = sightResult.getSchoolId();
-        Integer studentId = sightResult.getStudentId();
-        Integer deviceId = sightResult.getDeviceId();
+        Long classIdTmp = sightResult.getClassId();
+        Long schoolIdTmp = sightResult.getSchoolId();
+        Long studentId = sightResult.getStudentId();
+        Long deviceId = sightResult.getDeviceId();
         Class myClass = classService.getById(classIdTmp);
         if(myClass==null){
             throw new ClassNotExistException(MessageConstant.CLASS_NOT_EXIST);
@@ -81,7 +81,7 @@ public class ResultServiceImpl extends ServiceImpl<ResultMapper, Result>
     }
 
     @Override
-    public List<SightResultVO> info(Integer classId, Integer schoolId, String select, String input) {
+    public List<SightResultVO> info(Long classId, Long schoolId, String select, String input) {
         Integer testId=null;
         if(!Objects.equals(input, "")) {
             if (Objects.equals(select, "1")) {
@@ -119,7 +119,7 @@ public class ResultServiceImpl extends ServiceImpl<ResultMapper, Result>
     }
 
     @Override
-    public List<Integer> resultStatus(Integer schoolId, Integer classId, String timeStart, String timeEnd) {
+    public List<Integer> resultStatus(Long schoolId, Long classId, String timeStart, String timeEnd) {
         Date startTime = DateTransferUtil.transfer(LocalDateTime.parse(timeStart.replace(" ","T")));
         Date endTime = DateTransferUtil.transfer(LocalDateTime.parse(timeEnd.replace(" ","T")));
 
@@ -156,9 +156,9 @@ public class ResultServiceImpl extends ServiceImpl<ResultMapper, Result>
     }
 
     @Override
-    public Integer addResult(SightResultDTO sightResultDTO) {
+    public Long addResult(SightResultDTO sightResultDTO) {
         log.info("接受到了esp32数据:{}",sightResultDTO);
-        Integer studentId = sightResultDTO.getStudentId();
+        Long studentId = sightResultDTO.getStudentId();
         Result sightResult = new Result();
         BeanUtils.copyProperties(sightResultDTO,sightResult);
         StudentVO studentVO = studentService.info(studentId);

@@ -22,7 +22,7 @@ public class Account implements Serializable {
      * 账号id,用于标识一个账号
      */
     @TableId(type = IdType.AUTO)
-    private Integer accountId;
+    private Long accountId;
 
     /**
      * 用户名，登陆账号时使用
@@ -59,12 +59,12 @@ public class Account implements Serializable {
      * 所属学校
 
      */
-    private Integer schoolId;
+    private Long schoolId;
 
     /**
      * 所属班级
      */
-    private Integer classId;
+    private Long classId;
 
     /**
      * 邮箱

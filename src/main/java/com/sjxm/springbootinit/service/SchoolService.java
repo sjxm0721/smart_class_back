@@ -17,9 +17,9 @@ public interface SchoolService extends IService<School> {
 
     PageResult pageQuery(SchoolPageQueryDTO schoolPageQueryDTO);
 
-    void delete(Integer schoolId);
+    void delete(Long schoolId);
 
-    SchoolVO searchBySchoolId(Integer schoolId);
+    SchoolVO searchBySchoolId(Long schoolId);
 
     List<SchoolVO> myList();
 }

@@ -1,6 +1,5 @@
 package com.sjxm.springbootinit.model.entity;
 
-import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
@@ -11,57 +10,56 @@ import java.util.Date;
 
 /**
  * 
- * @TableName result
+ * @TableName chapter
  */
-@TableName(value ="result")
+@TableName(value ="chapter")
 @Data
-public class Result implements Serializable {
+public class Chapter implements Serializable {
     /**
-     * 测试id
-
+     * 章节id，主键
      */
-    @TableId(type = IdType.AUTO)
-    private Long testId;
-
-    /**
-     * 
-     */
-    private Long studentId;
+    @TableId
+    private Long id;
 
     /**
-     * 
+     * 所属课程id，逻辑id
      */
-    private Long deviceId;
+    private Long subjectId;
 
     /**
-     * 
+     * 课程号
      */
-    private Long classId;
+    private String chapterNum;
 
     /**
-     * 
+     * 是否是父？1-父、0-子。父表示具体的一个大章节，子表示大章节中具体的一小章节
      */
-    private Long schoolId;
+    private Integer isFather;
 
     /**
-     * 
+     * 当is_father为0时，需要father_chapter_id标识它属于哪一大章节
      */
-    private Double result;
+    private Long fatherChapterId;
 
     /**
-     * 0 正常，1轻度近视，2中度近视，3重度近视
+     * 标题
      */
-    private Integer level;
+    private String title;
+
+    /**
+     * 当is_father为0，需要url，表示这章的视频资源url
+     */
+    private String url;
 
     /**
      * 测试时间
      */
-    private Date testTime;
+    private Date createTime;
 
     /**
      * 
      */
-    private String advice;
+    private String createUser;
 
     /**
      * 最后修改时间
@@ -72,16 +70,6 @@ public class Result implements Serializable {
      * 
      */
     private String updateUser;
-
-    /**
-     * 创建时间
-     */
-    private Date createTime;
-
-    /**
-     * 
-     */
-    private String createUser;
 
     /**
      * 

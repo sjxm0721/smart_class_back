@@ -9,7 +9,7 @@ import java.util.List;
 * @author sijixiamu
 * @description 针对表【submit】的数据库操作Mapper
 * @createDate 2024-11-21 18:44:22
-* @Entity generator.domain.Submit
+* @Entity com.sjxm.springbootinit.model.entity.Submit
 */
 public interface SubmitMapper extends BaseMapper<Submit> {
 

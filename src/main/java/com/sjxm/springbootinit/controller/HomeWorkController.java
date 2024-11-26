@@ -32,15 +32,11 @@ public class HomeWorkController {
     @Resource
     private HomeworkService homeworkService;
 
-    @GetMapping("/list")
+    @GetMapping("/list-ts")
     @ApiOperation("获取作业列表信息")
-    public Result<List<Homework>> page(HomeWorkPageDTO homeWorkPageDTO){
-        LambdaQueryWrapper<Homework> lambdaQueryWrapper = new LambdaQueryWrapper<>();
-        lambdaQueryWrapper.eq(Homework::getTeacherId,homeWorkPageDTO.getTeacherId())
-                .like(!StrUtil.isBlankIfStr(homeWorkPageDTO.getInput()),Homework::getTitle,homeWorkPageDTO.getInput());
-        List<Homework> list = homeworkService.list(lambdaQueryWrapper);
-        List<Homework> collect = list.stream().map(homework -> homeworkService.getHomeworkTarget(homework)).collect(Collectors.toList());
-        return Result.success(collect);
+    public Result<List<Homework>> listByTorSID(HomeWorkPageDTO homeWorkPageDTO){
+        List<Homework> list = homeworkService.listByTorSID(homeWorkPageDTO);
+        return Result.success(list);
     }
 
     @DeleteMapping("/delete")
@@ -53,7 +49,7 @@ public class HomeWorkController {
     @GetMapping("/info")
     @ApiOperation("获取具体作业信息")
     public Result<Homework> info(Long homeworkId){
-        Homework homework = homeworkService.getById(homeworkId);
+        Homework homework = homeworkService.info(homeworkId);
         return Result.success(homework);
     }
 
@@ -61,7 +57,7 @@ public class HomeWorkController {
     @ApiOperation("布置作业")
     public Result add(@RequestBody HomeworkAddDTO homeworkAddDTO){
 
-        homeworkService.add(homeworkAddDTO, Long.parseLong(BaseContext.getCurrentId()));
+        homeworkService.add(homeworkAddDTO);
         return Result.success();
     }
 

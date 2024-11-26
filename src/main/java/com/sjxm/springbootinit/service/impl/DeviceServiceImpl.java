@@ -70,7 +70,7 @@ public class DeviceServiceImpl extends ServiceImpl<DeviceMapper, Device>
         for (Device device : result) {
             DeviceVO deviceVO = new DeviceVO();
             BeanUtils.copyProperties(device,deviceVO);
-            Integer classId = device.getClassId();
+            Long classId = device.getClassId();
             if(classId!=null){
                 Class myClass = classService.getById(classId);
                 if(myClass==null){
@@ -78,7 +78,7 @@ public class DeviceServiceImpl extends ServiceImpl<DeviceMapper, Device>
                 }
                 deviceVO.setClassName(myClass.getClassName());
             }
-            Integer schoolId = device.getSchoolId();
+            Long schoolId = device.getSchoolId();
             if(schoolId!=null){
                 School school = schoolService.getById(schoolId);
                 if(school==null){
@@ -95,7 +95,7 @@ public class DeviceServiceImpl extends ServiceImpl<DeviceMapper, Device>
     @Override
     @Transactional
     public void add(DeviceAddOrUpdateDTO deviceAddOrUpdateDTO) {
-        Integer schoolId=deviceAddOrUpdateDTO.getSchoolId();
+        Long schoolId=deviceAddOrUpdateDTO.getSchoolId();
 
         School school = schoolService.getById(schoolId);
 
@@ -117,14 +117,14 @@ public class DeviceServiceImpl extends ServiceImpl<DeviceMapper, Device>
     @Override
     @Transactional
     public void myUpdate(DeviceAddOrUpdateDTO deviceAddOrUpdateDTO) {
-        Integer deviceId = deviceAddOrUpdateDTO.getDeviceId();
+        Long deviceId = deviceAddOrUpdateDTO.getDeviceId();
         if(deviceAddOrUpdateDTO.getSchoolId()!=null){
-            Integer newSchoolId = deviceAddOrUpdateDTO.getSchoolId();
+            Long newSchoolId = deviceAddOrUpdateDTO.getSchoolId();
             Device oldDevice = this.getById(deviceId);
             if(oldDevice==null){
                 throw new DeviceNotExistException(MessageConstant.DEVICE_NOT_EXIST);
             }
-            Integer oldSchoolId = oldDevice.getSchoolId();
+            Long oldSchoolId = oldDevice.getSchoolId();
             if(!newSchoolId.equals(oldSchoolId)){
                 //进行了学校更改
                 if(oldDevice.getClassId()!=null){
@@ -155,7 +155,7 @@ public class DeviceServiceImpl extends ServiceImpl<DeviceMapper, Device>
             device.setLastRepairTime(DateTransferUtil.transfer(LocalDateTime.parse(deviceAddOrUpdateDTO.getLastRepairTime().replace(" ","T"))));
         }
         if(deviceAddOrUpdateDTO.getClassId()!=null){
-            Integer classId=deviceAddOrUpdateDTO.getClassId();
+            Long classId=deviceAddOrUpdateDTO.getClassId();
             Class myClass = classService.getById(classId);
             if(myClass==null){
                 throw new ClassNotExistException(MessageConstant.CLASS_NOT_EXIST);
@@ -169,14 +169,14 @@ public class DeviceServiceImpl extends ServiceImpl<DeviceMapper, Device>
 
     @Override
     @Transactional
-    public void clearBindWithClass(Integer deviceId) {
+    public void clearBindWithClass(Long deviceId) {
         Device device = this.getById(deviceId);
 
         if(device==null){
             throw new DeviceNotExistException(MessageConstant.DEVICE_NOT_EXIST);
         }
 
-        Integer classId = device.getClassId();
+        Long classId = device.getClassId();
         Class myClass = classService.getById(classId);
         if(classId==null||myClass==null){
             throw new ClassNotExistException(MessageConstant.CLASS_NOT_EXIST);
@@ -189,7 +189,7 @@ public class DeviceServiceImpl extends ServiceImpl<DeviceMapper, Device>
         if(studentTestNumbers.size()!=0)
         {
             for (StudentTestNumber studentTestNumber : studentTestNumbers) {
-                Integer studentId = studentTestNumber.getStudentId();
+                Long studentId = studentTestNumber.getStudentId();
                 Integer studentUsedNum = studentTestNumber.getStudentUsedNum();
                 Student student = studentService.getById(studentId);
                 if(student==null){
@@ -211,7 +211,7 @@ public class DeviceServiceImpl extends ServiceImpl<DeviceMapper, Device>
 
     @Override
     @Transactional
-    public void delete(Integer deviceId) {
+    public void delete(Long deviceId) {
         Device device = this.getById(deviceId);
         if(device==null){
             throw new DeviceNotExistException(MessageConstant.DEVICE_NOT_EXIST);
@@ -221,7 +221,7 @@ public class DeviceServiceImpl extends ServiceImpl<DeviceMapper, Device>
             throw new DeviceWithClassDeleteError(MessageConstant.DEVICE_WITH_CLASS_DELETE_ERROR);
         }
 
-        Integer schoolId = device.getSchoolId();
+        Long schoolId = device.getSchoolId();
         School school = schoolService.getById(schoolId);
         if(school==null){
             throw new SchoolNotExistException(MessageConstant.SCHOOL_NOT_EXIST);

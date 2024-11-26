@@ -7,15 +7,15 @@ import java.io.Serializable;
 @Data
 public class StudentAddOrUpdateDTO implements Serializable {
 
-    private Integer studentId;
+    private Long studentId;
 
     private String studentName;
 
     private String studentIdNumber;
 
-    private Integer schoolId;
+    private Long schoolId;
 
-    private Integer classId;
+    private Long classId;
 
     private Integer studentAge;
 

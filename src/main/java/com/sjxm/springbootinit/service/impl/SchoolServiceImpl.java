@@ -47,7 +47,7 @@ public class SchoolServiceImpl extends ServiceImpl<SchoolMapper, School>
     public SchoolVO obj2VO(School school){
         SchoolVO schoolVO = new SchoolVO();
         BeanUtils.copyProperties(school, schoolVO);
-        Integer masterId = school.getMasterId();
+        Long masterId = school.getMasterId();
         if (masterId != null) {
             Account account = accountService.getById(masterId);
             schoolVO.setMasterName(account.getName());
@@ -76,7 +76,7 @@ public class SchoolServiceImpl extends ServiceImpl<SchoolMapper, School>
 
     @Override
     @Transactional
-    public void delete(Integer schoolId) {
+    public void delete(Long schoolId) {
         School school = this.getById(schoolId);
         if(school==null)
         {
@@ -91,7 +91,7 @@ public class SchoolServiceImpl extends ServiceImpl<SchoolMapper, School>
         List<Account> list = accountService.list(accountLambdaQueryWrapper);
         if(list!=null&&list.size()>0){
             for (Account account : list) {
-                Integer accountId = account.getAccountId();
+                Long accountId = account.getAccountId();
                 accountService.delete(accountId);
             }
         }
@@ -110,14 +110,14 @@ public class SchoolServiceImpl extends ServiceImpl<SchoolMapper, School>
     }
 
     @Override
-    public SchoolVO searchBySchoolId(Integer schoolId) {
+    public SchoolVO searchBySchoolId(Long schoolId) {
         School school = this.getById(schoolId);
         if(school==null){
             throw new SchoolNotExistException(MessageConstant.SCHOOL_NOT_EXIST);
         }
         SchoolVO schoolVO= new SchoolVO();
         BeanUtils.copyProperties(school,schoolVO);
-        Integer masterId = school.getMasterId();
+        Long masterId = school.getMasterId();
         Account account = accountService.getById(masterId);
         if(account==null){
             throw new AccountNotFoundException(MessageConstant.ACCOUNT_NOT_FOUND);

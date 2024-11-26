@@ -20,14 +20,11 @@ public class HomeworkAddDTO implements Serializable {
 
     private List<String> resources;
 
-    private List<String> classIdList;
-
-    private List<Long> studentIdList;
 
     private String sightedTime;
 
     private String title;
 
-    private Integer type;
+    private Long subjectId;
 
 }

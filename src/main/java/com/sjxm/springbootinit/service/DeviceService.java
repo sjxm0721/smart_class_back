@@ -19,7 +19,7 @@ public interface DeviceService extends IService<Device> {
 
     void myUpdate(DeviceAddOrUpdateDTO deviceAddOrUpdateDTO);
 
-    void clearBindWithClass(Integer deviceId);
+    void clearBindWithClass(Long deviceId);
 
-    void delete(Integer deviceId);
+    void delete(Long deviceId);
 }

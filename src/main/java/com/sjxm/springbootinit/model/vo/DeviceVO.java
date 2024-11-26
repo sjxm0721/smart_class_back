@@ -12,15 +12,15 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @Builder
 public class DeviceVO {
-    private Integer deviceId;
+    private Long deviceId;
 
     private String deviceName;
 
-    private Integer schoolId;
+    private Long schoolId;
 
     private String schoolName;
 
-    private Integer classId;
+    private Long classId;
 
     private String className;
 

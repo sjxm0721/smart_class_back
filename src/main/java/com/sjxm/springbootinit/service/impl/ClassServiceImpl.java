@@ -53,13 +53,13 @@ public class ClassServiceImpl extends ServiceImpl<ClassMapper, Class>
     public MyClassVO obj2VO(Class myClass){
         MyClassVO myClassVO = new MyClassVO();
         BeanUtils.copyProperties(myClass,myClassVO);
-        Integer schoolId = myClass.getSchoolId();
+        Long schoolId = myClass.getSchoolId();
         School school = schoolService.getById(schoolId);
         if(school==null){
             throw new SchoolNotExistException(MessageConstant.SCHOOL_NOT_EXIST);
         }
         myClassVO.setSchoolName(school.getSchoolName());
-        Integer teacherId = myClass.getTeacherId();
+        Long teacherId = myClass.getTeacherId();
         if(teacherId!=null){
             Account account = accountService.getById(teacherId);
             if(account==null){
@@ -72,7 +72,7 @@ public class ClassServiceImpl extends ServiceImpl<ClassMapper, Class>
     }
 
     @Override
-    public List<MyClassVO> info(Integer classId) {
+    public List<MyClassVO> info(Long classId) {
         Class myClass = this.getById(classId);
         if(myClass==null)
         {
@@ -85,7 +85,7 @@ public class ClassServiceImpl extends ServiceImpl<ClassMapper, Class>
     }
 
     @Override
-    public List<MyClassVO> myList(Integer schoolId) {
+    public List<MyClassVO> myList(Long schoolId) {
         LambdaQueryWrapper<Class> lambdaQueryWrapper = new LambdaQueryWrapper<>();
         lambdaQueryWrapper.eq(Class::getSchoolId,schoolId);
         List<Class> list = this.list(lambdaQueryWrapper);
@@ -100,7 +100,7 @@ public class ClassServiceImpl extends ServiceImpl<ClassMapper, Class>
     }
 
     @Override
-    public PageResult myPage(Integer schoolId, String input, Integer currentPage, Integer pageSize) {
+    public PageResult myPage(Long schoolId, String input, Integer currentPage, Integer pageSize) {
         Page<Class> page = new Page<>(currentPage,pageSize);
         LambdaQueryWrapper<Class> lambdaQueryWrapper = new LambdaQueryWrapper<>();
         lambdaQueryWrapper.eq(schoolId!=null,Class::getSchoolId,schoolId)
@@ -122,7 +122,7 @@ public class ClassServiceImpl extends ServiceImpl<ClassMapper, Class>
     @Override
     @Transactional
     public void add(MyClassDTO myClassDTO) {
-        Integer schoolId=myClassDTO.getSchoolId();
+        Long schoolId=myClassDTO.getSchoolId();
         String className=myClassDTO.getClassName();
         School school = schoolService.getById(schoolId);
         if(school==null){
@@ -143,14 +143,14 @@ public class ClassServiceImpl extends ServiceImpl<ClassMapper, Class>
     @Override
     @Transactional
     public void myUpdate(MyClassDTO myClassDTO) {
-        Integer classId = myClassDTO.getClassId();
+        Long classId = myClassDTO.getClassId();
 
         Class oldClass = this.getById(classId);
         if(oldClass==null){
             throw new ClassNotExistException(MessageConstant.CLASS_NOT_EXIST);
         }
-        Integer newSchoolId = myClassDTO.getSchoolId();
-        Integer oldSchoolId = oldClass.getSchoolId();
+        Long newSchoolId = myClassDTO.getSchoolId();
+        Long oldSchoolId = oldClass.getSchoolId();
         if(oldClass.getTeacherId()!=null&& !Objects.equals(newSchoolId, oldSchoolId)){
             throw new BaseException(MessageConstant.CLASS_WITH_TEACHER_EDIT_ERROR);
         }
@@ -176,7 +176,7 @@ public class ClassServiceImpl extends ServiceImpl<ClassMapper, Class>
 
     @Override
     @Transactional(propagation = Propagation.REQUIRED)
-    public void delete(Integer schoolId, Long classId) {
+    public void delete(Long schoolId, Long classId) {
         Class myClass = this.getById(classId);
         Integer deviceNum = myClass.getDeviceNum();
         if(deviceNum>0){
@@ -209,13 +209,13 @@ public class ClassServiceImpl extends ServiceImpl<ClassMapper, Class>
     }
 
     @Override
-    public void clearTeacher(Integer classId) {
+    public void clearTeacher(Long classId) {
         Class myClass = this.getById(classId);
         if(myClass==null){
             throw new ClassNotExistException(MessageConstant.CLASS_NOT_EXIST);
         }
 
-        Integer teacherId = myClass.getTeacherId();
+        Long teacherId = myClass.getTeacherId();
         Account account = accountService.getById(teacherId);
 
         if(account==null){
