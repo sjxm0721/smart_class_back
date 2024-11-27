@@ -1,7 +1,11 @@
 package com.sjxm.springbootinit.service;
 
+import com.sjxm.springbootinit.model.dto.SubjectAddOrUpdateDTO;
+import com.sjxm.springbootinit.model.dto.SubjectQueryDTO;
 import com.sjxm.springbootinit.model.entity.Subject;
 import com.baomidou.mybatisplus.extension.service.IService;
+
+import java.util.List;
 
 /**
 * @author sijixiamu
@@ -10,4 +14,9 @@ import com.baomidou.mybatisplus.extension.service.IService;
 */
 public interface SubjectService extends IService<Subject> {
 
+    List<Subject> myList(SubjectQueryDTO subjectQueryDTO);
+
+    void addOrUpdate(SubjectAddOrUpdateDTO subjectAddOrUpdateDTO);
+
+    Subject info(Long subjectId);
 }

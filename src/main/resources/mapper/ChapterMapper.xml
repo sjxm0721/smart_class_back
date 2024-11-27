@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.sjxm.springbootinit.mapper.ChapterMapper">
+
+    <resultMap id="BaseResultMap" type="com.sjxm.springbootinit.model.entity.Chapter">
+            <id property="id" column="id" jdbcType="BIGINT"/>
+            <result property="subjectId" column="subject_id" jdbcType="BIGINT"/>
+            <result property="chapterNum" column="chapter_num" jdbcType="VARCHAR"/>
+            <result property="isFather" column="is_father" jdbcType="TINYINT"/>
+            <result property="fatherChapterId" column="father_chapter_id" jdbcType="BIGINT"/>
+            <result property="title" column="title" jdbcType="VARCHAR"/>
+            <result property="url" column="url" jdbcType="VARCHAR"/>
+            <result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>
+            <result property="createUser" column="create_user" jdbcType="VARCHAR"/>
+            <result property="updateTime" column="update_time" jdbcType="TIMESTAMP"/>
+            <result property="updateUser" column="update_user" jdbcType="VARCHAR"/>
+            <result property="deleteFlag" column="delete_flag" jdbcType="TINYINT"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        id,subject_id,chapter_num,
+        is_father,father_chapter_id,title,
+        url,create_time,create_user,
+        update_time,update_user,delete_flag
+    </sql>
+</mapper>

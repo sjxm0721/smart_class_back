@@ -10,6 +10,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.converter.HttpMessageConverter;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
+import org.springframework.web.servlet.config.annotation.AsyncSupportConfigurer;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurationSupport;
@@ -21,6 +22,7 @@ import springfox.documentation.spi.DocumentationType;
 import springfox.documentation.spring.web.plugins.Docket;
 
 import java.util.List;
+import java.util.Objects;
 
 /**
  * 配置类，注册web层相关组件
@@ -79,17 +81,27 @@ public class WebMvcConfiguration extends WebMvcConfigurationSupport {
         registry.addResourceHandler("/webjars/**").addResourceLocations("classpath:/META-INF/resources/webjars/");
     }
 
-    /**
-     *  扩展spring MVC框架消息转换器(规范输出时间格式)
-     * @param converters
-     */
-    protected void extendMessageConverters(List<HttpMessageConverter<?>> converters){
-        //创建一个消息转换器对象
-        MappingJackson2HttpMessageConverter converter=new MappingJackson2HttpMessageConverter();
-        //需要为消息转换器设置一个对象转换器，对象转换器可以将java对象序列化为json数据
-        converter.setObjectMapper(new JacksonObjectMapper());
-        //将自己的消息转换器加入容器中
-        converters.add(0,converter);
+    //去掉多余的序列化器
+    @Autowired(required = false)
+    private MappingJackson2HttpMessageConverter mappingJackson2HttpMessageConverter;
+
+
+    @Override
+    public void extendMessageConverters(List<HttpMessageConverter<?>> converters) {
+        converters.removeIf(converter -> converter instanceof MappingJackson2HttpMessageConverter);
+        if (Objects.isNull(mappingJackson2HttpMessageConverter)) {
+            converters.add(0, new MappingJackson2HttpMessageConverter());
+        } else {
+            converters.add(0, mappingJackson2HttpMessageConverter);
+        }
     }
+
+    @Override
+    public void configureAsyncSupport(AsyncSupportConfigurer configurer) {
+        long timeout = 4 * 1000;
+        WebMvcConfiguration.super.configureAsyncSupport(configurer);
+        configurer.setDefaultTimeout(timeout);
+    }
+
 }
 

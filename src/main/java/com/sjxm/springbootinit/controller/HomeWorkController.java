@@ -1,8 +1,5 @@
 package com.sjxm.springbootinit.controller;
 
-import cn.hutool.core.util.StrUtil;
-import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
-import com.sjxm.springbootinit.context.BaseContext;
 import com.sjxm.springbootinit.model.dto.HomeWorkPageDTO;
 import com.sjxm.springbootinit.model.dto.HomeworkAddDTO;
 import com.sjxm.springbootinit.model.entity.Homework;
@@ -15,7 +12,6 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  * @Author: 四季夏目

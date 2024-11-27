@@ -72,5 +72,17 @@ public class Subject implements Serializable {
     private Long classId;
 
     @TableField(exist = false)
+    private String className;
+
+    @TableField(exist = false)
+    private String teacherName;
+
+    /**
+     * 封面资源
+     */
+    private String pic;
+
+
+    @TableField(exist = false)
     private static final long serialVersionUID = 1L;
 }

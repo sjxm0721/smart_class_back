@@ -16,6 +16,7 @@
             <result property="createUser" column="create_user" jdbcType="VARCHAR"/>
             <result property="updateUser" column="update_user" jdbcType="VARCHAR"/>
             <result property="classId" column="class_id" jdbcType="BIGINT"/>
+            <result property="pic" column="pic" jdbcType="VARCHAR"/>
     </resultMap>
 
     <sql id="Base_Column_List">
