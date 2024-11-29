@@ -46,10 +46,6 @@ public class ClassServiceImpl extends ServiceImpl<ClassMapper, Class>
     @Resource
     private AccountService accountService;
 
-    @Resource
-    @Lazy
-    private StudentService studentService;
-
     public MyClassVO obj2VO(Class myClass){
         MyClassVO myClassVO = new MyClassVO();
         BeanUtils.copyProperties(myClass,myClassVO);
@@ -201,9 +197,9 @@ public class ClassServiceImpl extends ServiceImpl<ClassMapper, Class>
 
         schoolService.updateById(school);
 
-        LambdaQueryWrapper<Student> studentLambdaQueryWrapper = new LambdaQueryWrapper<>();
-        studentLambdaQueryWrapper.eq(Student::getClassId,classId);
-        studentService.remove(studentLambdaQueryWrapper);
+        LambdaQueryWrapper<Account> accountLambdaQueryWrapper = new LambdaQueryWrapper<>();
+        accountLambdaQueryWrapper.eq(Account::getClassId,classId).eq(Account::getAuth,0);
+        accountService.remove(accountLambdaQueryWrapper);
 
         this.removeById(classId);
     }

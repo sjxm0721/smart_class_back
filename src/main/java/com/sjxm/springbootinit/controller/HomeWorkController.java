@@ -1,5 +1,6 @@
 package com.sjxm.springbootinit.controller;
 
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.sjxm.springbootinit.model.dto.HomeWorkPageDTO;
 import com.sjxm.springbootinit.model.dto.HomeworkAddDTO;
 import com.sjxm.springbootinit.model.entity.Homework;
@@ -42,12 +43,7 @@ public class HomeWorkController {
         return Result.success();
     }
 
-    @GetMapping("/info")
-    @ApiOperation("获取具体作业信息")
-    public Result<Homework> info(Long homeworkId){
-        Homework homework = homeworkService.info(homeworkId);
-        return Result.success(homework);
-    }
+
 
     @PostMapping("/add")
     @ApiOperation("布置作业")
@@ -55,6 +51,22 @@ public class HomeWorkController {
 
         homeworkService.add(homeworkAddDTO);
         return Result.success();
+    }
+
+    @GetMapping("/list")
+    @ApiOperation("获取某课程作业列表信息")
+    public Result<List<Homework>> list(Long subjectId){
+        LambdaQueryWrapper<Homework> lambdaQueryWrapper = new LambdaQueryWrapper<>();
+        lambdaQueryWrapper.eq(Homework::getSubjectId,subjectId).orderBy(true,false,Homework::getCreateTime);
+        List<Homework> homeworkList = homeworkService.list(lambdaQueryWrapper);
+        return Result.success(homeworkList);
+    }
+
+    @GetMapping("/info")
+    @ApiOperation("获取具体作业信息")
+    public Result<Homework> info(Long homeworkId){
+        Homework homework = homeworkService.info(homeworkId);
+        return Result.success(homework);
     }
 
 }

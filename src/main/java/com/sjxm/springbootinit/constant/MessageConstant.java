@@ -47,4 +47,7 @@ public class MessageConstant {
     public static final String CLASS_WITH_DEVICE_DELETE_ERROR="该班级与设备绑定，删除失败";
 
     public static final String SUBMIT_NOT_FOUND_ERROR = "该提交记录未找到";
+
+    public static final String CHAPTER_NOT_FOUND_ERROR = "该章节记录未找到";
+
 }

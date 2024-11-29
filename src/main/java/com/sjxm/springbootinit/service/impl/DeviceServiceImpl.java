@@ -43,9 +43,9 @@ public class DeviceServiceImpl extends ServiceImpl<DeviceMapper, Device>
     @Lazy
     private SchoolService schoolService;
 
-    @Resource
-    @Lazy
-    private StudentService studentService;
+//    @Resource
+//    @Lazy
+//    private StudentService studentService;
 
     @Resource
     @Lazy
@@ -184,21 +184,21 @@ public class DeviceServiceImpl extends ServiceImpl<DeviceMapper, Device>
         myClass.setDeviceNum(myClass.getDeviceNum()-1);
         classService.updateById(myClass);
 
-        List<StudentTestNumber> studentTestNumbers = resultMapper.getStudentUserDevice2(device);
-
-        if(studentTestNumbers.size()!=0)
-        {
-            for (StudentTestNumber studentTestNumber : studentTestNumbers) {
-                Long studentId = studentTestNumber.getStudentId();
-                Integer studentUsedNum = studentTestNumber.getStudentUsedNum();
-                Student student = studentService.getById(studentId);
-                if(student==null){
-                    throw new StudentNotExistException(MessageConstant.STUDENT_NOT_EXIST);
-                }
-                student.setTestNum(student.getTestNum()-studentUsedNum);
-                studentService.updateById(student);
-            }
-        }
+//        List<StudentTestNumber> studentTestNumbers = resultMapper.getStudentUserDevice2(device);
+//
+//        if(studentTestNumbers.size()!=0)
+//        {
+//            for (StudentTestNumber studentTestNumber : studentTestNumbers) {
+//                Long studentId = studentTestNumber.getStudentId();
+//                Integer studentUsedNum = studentTestNumber.getStudentUsedNum();
+//                Student student = studentService.getById(studentId);
+//                if(student==null){
+//                    throw new StudentNotExistException(MessageConstant.STUDENT_NOT_EXIST);
+//                }
+//                student.setTestNum(student.getTestNum()-studentUsedNum);
+//                studentService.updateById(student);
+//            }
+//        }
 
         LambdaQueryWrapper<Result> lambdaQueryWrapper = new LambdaQueryWrapper<>();
         lambdaQueryWrapper.eq(Result::getDeviceId,device.getDeviceId());

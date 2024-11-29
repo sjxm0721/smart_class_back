@@ -14,15 +14,11 @@ import java.time.LocalDateTime;
 @Builder
 public class StudentVO implements Serializable {
 
-    private Long studentId;
+    private Long accountId;
 
-    private String studentIdNumber;
+    private String userId;
 
-    private String studentName;
-
-    private Integer studentAge;
-
-    private Integer studentSex;
+    private String name;
 
     private String phone;
 
@@ -30,19 +26,10 @@ public class StudentVO implements Serializable {
 
     private Long classId;
 
+    private String className;
+
     private Long schoolId;
 
-    private Integer shortSighted;
+    private String schoolName;
 
-    private Double ssValue;
-
-    private Integer testNum;
-
-    private LocalDateTime createTime;
-
-    private String createUser;
-
-    private LocalDateTime updateTime;
-
-    private String updateUser;
 }

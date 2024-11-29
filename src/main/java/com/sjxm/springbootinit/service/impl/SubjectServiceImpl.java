@@ -35,8 +35,8 @@ import java.util.stream.Collectors;
 public class SubjectServiceImpl extends ServiceImpl<SubjectMapper, Subject>
     implements SubjectService{
 
-    @Resource
-    private StudentService studentService;
+//    @Resource
+//    private StudentService studentService;
 
     @Resource
     private ClassService classService;
@@ -63,7 +63,7 @@ public class SubjectServiceImpl extends ServiceImpl<SubjectMapper, Subject>
 
         LambdaQueryWrapper<Subject> lambdaQueryWrapper = new LambdaQueryWrapper<>();
         if(studentId!=null){
-            Student student = studentService.getById(studentId);
+            Account student = accountService.getById(studentId);
             Long classId = student.getClassId();
             lambdaQueryWrapper.eq(Subject::getClassId,classId);
         }

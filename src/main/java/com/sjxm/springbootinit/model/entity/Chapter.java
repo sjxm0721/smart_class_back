@@ -2,11 +2,13 @@ package com.sjxm.springbootinit.model.entity;
 
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
+import com.baomidou.mybatisplus.annotation.TableLogic;
 import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.Data;
 
 import java.io.Serializable;
 import java.util.Date;
+import java.util.List;
 
 /**
  * 
@@ -51,6 +53,9 @@ public class Chapter implements Serializable {
      */
     private String url;
 
+    @TableField(exist = false)
+    private List<Chapter> childrenList;
+
     /**
      * 测试时间
      */
@@ -74,6 +79,7 @@ public class Chapter implements Serializable {
     /**
      * 
      */
+    @TableLogic
     private Integer deleteFlag;
 
     @TableField(exist = false)

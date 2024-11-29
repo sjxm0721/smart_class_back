@@ -91,5 +91,6 @@ public class Submit implements Serializable {
     @TableField(exist = false)
     private String homeworkTitle;
 
+    @TableField
     private Integer deleteFlag;
 }

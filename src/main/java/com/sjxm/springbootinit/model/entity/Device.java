@@ -1,10 +1,7 @@
 package com.sjxm.springbootinit.model.entity;
 
 import cn.hutool.core.bean.BeanUtil;
-import com.baomidou.mybatisplus.annotation.IdType;
-import com.baomidou.mybatisplus.annotation.TableField;
-import com.baomidou.mybatisplus.annotation.TableId;
-import com.baomidou.mybatisplus.annotation.TableName;
+import com.baomidou.mybatisplus.annotation.*;
 import com.sjxm.springbootinit.model.vo.DeviceVO;
 import lombok.Data;
 
@@ -83,6 +80,7 @@ public class Device implements Serializable {
     /**
      * 
      */
+    @TableLogic
     private Integer deleteFlag;
 
     @TableField(exist = false)

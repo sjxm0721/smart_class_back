@@ -21,6 +21,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
+import javax.annotation.Resource;
 import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -42,9 +43,12 @@ public class ResultServiceImpl extends ServiceImpl<ResultMapper, Result>
     @Autowired
     private SchoolService schoolService;
 
-    @Autowired
-    @Lazy
-    private StudentService studentService;
+    @Resource
+    private AccountService accountService;
+
+//    @Autowired
+//    @Lazy
+//    private StudentService studentService;
 
     @Autowired
     private DeviceService deviceService;
@@ -66,11 +70,11 @@ public class ResultServiceImpl extends ServiceImpl<ResultMapper, Result>
             throw new SchoolNotExistException(MessageConstant.SCHOOL_NOT_EXIST);
         }
         sightResultVO.setSchoolName(school.getSchoolName());
-        Student student = studentService.getById(studentId);
+        Account student = accountService.getById(studentId);
         if(student==null){
             throw new StudentNotExistException(MessageConstant.STUDENT_NOT_EXIST);
         }
-        sightResultVO.setStudentName(student.getStudentName());
+        sightResultVO.setStudentName(student.getName());
         sightResultVO.setPhone(student.getPhone());
         Device device = deviceService.getById(deviceId);
         if(device==null){
@@ -161,9 +165,9 @@ public class ResultServiceImpl extends ServiceImpl<ResultMapper, Result>
         Long studentId = sightResultDTO.getStudentId();
         Result sightResult = new Result();
         BeanUtils.copyProperties(sightResultDTO,sightResult);
-        StudentVO studentVO = studentService.info(studentId);
-        sightResult.setClassId(studentVO.getClassId());
-        sightResult.setSchoolId(studentVO.getSchoolId());
+        Account account = accountService.getById(studentId);
+        sightResult.setClassId(account.getClassId());
+        sightResult.setSchoolId(account.getSchoolId());
         sightResult.setAdvice("多喝热水");
         sightResult.setTestTime(DateTransferUtil.transfer(LocalDateTime.now()));
         Double result = sightResultDTO.getResult();

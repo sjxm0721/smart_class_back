@@ -17,6 +17,7 @@
             <result property="updateUser" column="update_user" jdbcType="VARCHAR"/>
             <result property="classId" column="class_id" jdbcType="BIGINT"/>
             <result property="pic" column="pic" jdbcType="VARCHAR"/>
+            <result property="deleteFlag" column="delete_flag" jdbcType="TINYINT"/>
     </resultMap>
 
     <sql id="Base_Column_List">

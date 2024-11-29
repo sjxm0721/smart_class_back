@@ -82,6 +82,9 @@ public class Subject implements Serializable {
      */
     private String pic;
 
+    @TableField
+    private Integer deleteFlag;
+
 
     @TableField(exist = false)
     private static final long serialVersionUID = 1L;

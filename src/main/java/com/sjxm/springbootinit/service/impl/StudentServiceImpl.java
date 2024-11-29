@@ -50,7 +50,7 @@ public class StudentServiceImpl extends ServiceImpl<StudentMapper, Student>
     public Student dto2Obj(StudentAddOrUpdateDTO dto){
         Long schoolId= dto.getSchoolId();
         Long classId = dto.getClassId();
-        String studentIdNumber = dto.getStudentIdNumber();
+//        String studentIdNumber = dto.getStudentIdNumber();
 
         School school = schoolService.getById(schoolId);
         if(school==null){
@@ -65,7 +65,8 @@ public class StudentServiceImpl extends ServiceImpl<StudentMapper, Student>
         classService.updateById(myClass);
 
         LambdaQueryWrapper<Student> lambdaQueryWrapper = new LambdaQueryWrapper<>();
-        lambdaQueryWrapper.eq(Student::getClassId,classId).eq(Student::getStudentIdNumber,studentIdNumber);
+        lambdaQueryWrapper.eq(Student::getClassId,classId);
+//                .eq(Student::getStudentIdNumber,studentIdNumber);
         Student ifHasStudent =  this.getOne(lambdaQueryWrapper);
         if(ifHasStudent!=null){
             throw new IdNumberHasBeenUsedException(MessageConstant.ID_NUMBER_HAS_BEEN_USED);
@@ -73,9 +74,9 @@ public class StudentServiceImpl extends ServiceImpl<StudentMapper, Student>
         Student student=new Student();
         BeanUtils.copyProperties(dto,student);
         student.setTestNum(0);
-        if(dto.getShortSighted()==0){
-            student.setSsValue((double) 0);
-        }
+//        if(dto.getShortSighted()==0){
+//            student.setSsValue((double) 0);
+//        }
         return student;
     }
 

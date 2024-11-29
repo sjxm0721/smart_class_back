@@ -34,8 +34,8 @@ public class HomeworkServiceImpl extends ServiceImpl<HomeworkMapper, Homework>
     implements HomeworkService{
 
 
-    @Resource
-    private StudentService studentService;
+//    @Resource
+//    private StudentService studentService;
 
     @Resource
     private ClassService classService;
@@ -71,12 +71,12 @@ public class HomeworkServiceImpl extends ServiceImpl<HomeworkMapper, Homework>
         homework.setTotalNum(aClass.getStudentNum());
 
         Set<Long> set = list.stream().map(Submit::getStudentId).collect(Collectors.toSet());
-        LambdaQueryWrapper<Student> studentLambdaQueryWrapper = new LambdaQueryWrapper<>();
-        studentLambdaQueryWrapper.notIn(!CollUtil.isEmpty(set),Student::getStudentId,set);
-        List<Student> studentList = studentService.list(studentLambdaQueryWrapper);
+        LambdaQueryWrapper<Account> accountLambdaQueryWrapper = new LambdaQueryWrapper<>();
+        accountLambdaQueryWrapper.notIn(!CollUtil.isEmpty(set),Account::getAccountId,set).eq(Account::getAuth,0);
+        List<Account> studentList = accountService.list(accountLambdaQueryWrapper);
         StringBuilder sb = new StringBuilder();
         studentList.forEach(student -> {
-            sb.append(student.getStudentName()).append(",");
+            sb.append(student.getName()).append(",");
         });
         sb.deleteCharAt(sb.length()-1);
         homework.setUnCompleteStudentList(sb.toString());
@@ -100,9 +100,9 @@ public class HomeworkServiceImpl extends ServiceImpl<HomeworkMapper, Homework>
         List<Subject> list = null;
         if(teacherId==null){
             //学生查询
-            LambdaQueryWrapper<Student> studentLambdaQueryWrapper = new LambdaQueryWrapper<>();
-            studentLambdaQueryWrapper.eq(Student::getStudentId,studentId);
-            Student student = studentService.getOne(studentLambdaQueryWrapper);
+            LambdaQueryWrapper<Account> studentLambdaQueryWrapper = new LambdaQueryWrapper<>();
+            studentLambdaQueryWrapper.eq(Account::getAccountId,studentId).eq(Account::getAuth,0);
+            Account student = accountService.getOne(studentLambdaQueryWrapper);
             Long classId = student.getClassId();
             LambdaQueryWrapper<Subject> subjectLambdaQueryWrapper = new LambdaQueryWrapper<>();
             subjectLambdaQueryWrapper.eq(Subject::getClassId,classId);
@@ -116,7 +116,8 @@ public class HomeworkServiceImpl extends ServiceImpl<HomeworkMapper, Homework>
 
         }
         LambdaQueryWrapper<Homework> homeworkLambdaQueryWrapper = new LambdaQueryWrapper<>();
-        homeworkLambdaQueryWrapper.in(!CollUtil.isEmpty(list),Homework::getSubjectId,list).like(!StrUtil.isBlankIfStr(input),Homework::getTitle,input);
+        List<Long> newList = list.stream().map(Subject::getId).collect(Collectors.toList());
+        homeworkLambdaQueryWrapper.in(!CollUtil.isEmpty(newList),Homework::getSubjectId,newList).like(!StrUtil.isBlankIfStr(input),Homework::getTitle,input);
         List<Homework> homeworkList = this.list(homeworkLambdaQueryWrapper);
         return homeworkList.stream().map(this::obj2VO).collect(Collectors.toList());
     }
