@@ -103,6 +103,16 @@ public class Homework implements Serializable {
     private Long teacherId;
 
     @TableField(exist = false)
-
     private String teacherName;
+
+    @TableField(exist = false)
+    private String subjectName;
+
+    /**
+     * 是否已提交
+     */
+    @TableField(exist = false)
+    private Integer sstatus = 0;
+
+
 }

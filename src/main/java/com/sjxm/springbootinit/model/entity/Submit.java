@@ -2,8 +2,12 @@ package com.sjxm.springbootinit.model.entity;
 
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
+import com.baomidou.mybatisplus.annotation.TableLogic;
 import com.baomidou.mybatisplus.annotation.TableName;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
@@ -15,6 +19,9 @@ import java.util.Date;
  */
 @TableName(value ="submit")
 @Data
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
 public class Submit implements Serializable {
     /**
      * 作业提交表主键
@@ -91,6 +98,15 @@ public class Submit implements Serializable {
     @TableField(exist = false)
     private String homeworkTitle;
 
-    @TableField
+    @TableLogic
     private Integer deleteFlag;
+
+    private String resources;
+
+    @TableField(exist = false)
+    private String studentName;
+
+    @TableField(exist = false)
+    private String subjectName;
+
 }

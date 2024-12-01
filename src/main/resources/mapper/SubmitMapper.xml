@@ -20,6 +20,9 @@
             <result property="content" column="content" jdbcType="VARCHAR"/>
             <result property="deleteFlag" column="delete_flag" jdbcType="TINYINT"/>
             <result property="homeworkTitle" column="homework_title" jdbcType="VARCHAR"/>
+            <result property="resources" column="resources" jdbcType="VARCHAR"/>
+            <result property="subjectName" column="subject_name" jdbcType="VARCHAR"/>
+            <result property="studentName" column="student_name" jdbcType="VARCHAR"/>
     </resultMap>
 
     <sql id="Base_Column_List">
@@ -32,27 +35,42 @@
 
     <select id="myList" resultMap="BaseResultMap">
         SELECT
-            s.id, s.homework_id, s.submit_time, s.correct_time,
-            s.is_corrected, s.student_id, s.score, s.comment,
-            s.create_user, s.update_user, s.create_time, s.update_time,
-            s.content, h.title as homework_title
-        FROM
-            submit s
-                LEFT JOIN homework h ON s.homework_id = h.id
+        s.id,
+        s.homework_id,
+        s.submit_time,
+        s.correct_time,
+        s.is_corrected,
+        s.student_id,
+        s.score,
+        s.comment,
+        s.create_user,
+        s.update_user,
+        s.create_time,
+        s.update_time,
+        s.content,
+        s.resources,
+        sub.title as subject_name,
+        h.title as homework_title,
+        ac.name as student_name
+        FROM submit s
+        LEFT JOIN homework h ON s.homework_id = h.id
+        LEFT JOIN subject sub ON h.subject_id = sub.id
+        LEFT JOIN account ac ON ac.account_id = s.student_id
         <where>
             s.delete_flag = 0
-            <if test="input!=null and input!=''">
-                and h.title like concat('%',#{input},'%')
+            <if test="input != null and input != ''">
+                AND h.title LIKE concat('%', #{input}, '%')
             </if>
-            <if test="status!=null">
-                and s.is_corrected = #{status}
+            <if test="status != null">
+                AND s.is_corrected = #{status}
             </if>
-            <if test="studentId!=null">
-                and s.student_id = #{studentId}
+            <if test="studentId != null">
+                AND s.student_id = #{studentId}
             </if>
-            <if test="teacherId">
-                and h.teacher_id = #{teacherId}
+            <if test="teacherId != null">
+                AND sub.teacher_id = #{teacherId}
             </if>
         </where>
+        ORDER BY s.create_time DESC
     </select>
 </mapper>

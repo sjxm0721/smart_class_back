@@ -4,8 +4,10 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.sjxm.springbootinit.model.dto.HomeWorkPageDTO;
 import com.sjxm.springbootinit.model.dto.HomeworkAddDTO;
 import com.sjxm.springbootinit.model.entity.Homework;
+import com.sjxm.springbootinit.model.entity.Submit;
 import com.sjxm.springbootinit.result.Result;
 import com.sjxm.springbootinit.service.HomeworkService;
+import com.sjxm.springbootinit.service.SubmitService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
@@ -28,6 +30,9 @@ public class HomeWorkController {
 
     @Resource
     private HomeworkService homeworkService;
+
+    @Resource
+    private SubmitService submitService;
 
     @GetMapping("/list-ts")
     @ApiOperation("获取作业列表信息")
@@ -55,10 +60,13 @@ public class HomeWorkController {
 
     @GetMapping("/list")
     @ApiOperation("获取某课程作业列表信息")
-    public Result<List<Homework>> list(Long subjectId){
+    public Result<List<Homework>> list(Long subjectId,Long studentId){
         LambdaQueryWrapper<Homework> lambdaQueryWrapper = new LambdaQueryWrapper<>();
         lambdaQueryWrapper.eq(Homework::getSubjectId,subjectId).orderBy(true,false,Homework::getCreateTime);
         List<Homework> homeworkList = homeworkService.list(lambdaQueryWrapper);
+        if(studentId!=null){
+            homeworkList.forEach(homework -> buildSstatusInfo(homework,studentId));
+        }
         return Result.success(homeworkList);
     }
 
@@ -67,6 +75,16 @@ public class HomeWorkController {
     public Result<Homework> info(Long homeworkId){
         Homework homework = homeworkService.info(homeworkId);
         return Result.success(homework);
+    }
+
+    void buildSstatusInfo(Homework homework,Long studentId){
+        Long homeworkId = homework.getId();
+        LambdaQueryWrapper<Submit> lambdaQueryWrapper = new LambdaQueryWrapper<>();
+        lambdaQueryWrapper.eq(Submit::getHomeworkId,homeworkId).eq(Submit::getStudentId,studentId);
+        Submit submit = submitService.getOne(lambdaQueryWrapper);
+        if(submit!=null){
+            homework.setSstatus(1);
+        }
     }
 
 }

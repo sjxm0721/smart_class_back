@@ -1,9 +1,7 @@
 package com.sjxm.springbootinit.model.entity;
 
-import com.baomidou.mybatisplus.annotation.IdType;
-import com.baomidou.mybatisplus.annotation.TableField;
-import com.baomidou.mybatisplus.annotation.TableId;
-import com.baomidou.mybatisplus.annotation.TableName;
+import com.baomidou.mybatisplus.annotation.*;
+
 import java.io.Serializable;
 import java.util.Date;
 import lombok.Data;
@@ -82,7 +80,7 @@ public class Subject implements Serializable {
      */
     private String pic;
 
-    @TableField
+    @TableLogic
     private Integer deleteFlag;
 
 

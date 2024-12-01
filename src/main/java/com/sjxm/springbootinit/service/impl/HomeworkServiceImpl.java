@@ -55,6 +55,7 @@ public class HomeworkServiceImpl extends ServiceImpl<HomeworkMapper, Homework>
         LambdaQueryWrapper<Subject> subjectLambdaQueryWrapper = new LambdaQueryWrapper<>();
         subjectLambdaQueryWrapper.eq(Subject::getId,subjectId);
         Subject subject = subjectService.getOne(subjectLambdaQueryWrapper);
+        homework.setSubjectName(subject.getTitle());
         Long classId = subject.getClassId();
         Long teacherId = subject.getTeacherId();
         Class aClass = classService.getById(classId);
