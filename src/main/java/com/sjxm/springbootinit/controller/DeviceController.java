@@ -1,6 +1,7 @@
 package com.sjxm.springbootinit.controller;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.sjxm.springbootinit.constant.MessageConstant;
 import com.sjxm.springbootinit.model.dto.DeviceAddOrUpdateDTO;
 import com.sjxm.springbootinit.model.dto.DevicePageQueryDTO;
 import com.sjxm.springbootinit.model.entity.Device;
@@ -13,7 +14,9 @@ import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -88,6 +91,16 @@ public class DeviceController {
         Long deviceNumber = deviceService.count(lambdaQueryWrapper);
 
         return Result.success(deviceNumber);
+    }
+
+    @PostMapping("/import")
+    public Result importDevices(@RequestParam("file") MultipartFile file, Long schoolId) {
+        try {
+            deviceService.importDevices(file.getInputStream(),schoolId);
+            return Result.success("导入成功");
+        } catch (IOException e) {
+            return Result.error(MessageConstant.EXCEL_IMPORT_ERROR);
+        }
     }
 
 }

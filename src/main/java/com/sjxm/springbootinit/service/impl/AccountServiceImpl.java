@@ -9,10 +9,7 @@ import com.sjxm.springbootinit.constant.MessageConstant;
 import com.sjxm.springbootinit.constant.PasswordConstant;
 import com.sjxm.springbootinit.context.BaseContext;
 import com.sjxm.springbootinit.exception.*;
-import com.sjxm.springbootinit.model.dto.AccountAddOrUpdateDTO;
-import com.sjxm.springbootinit.model.dto.AccountDTO;
-import com.sjxm.springbootinit.model.dto.AccountPageQueryDTO;
-import com.sjxm.springbootinit.model.dto.PasswordChangeDTO;
+import com.sjxm.springbootinit.model.dto.*;
 import com.sjxm.springbootinit.model.entity.Account;
 import com.sjxm.springbootinit.mapper.AccountMapper;
 import com.sjxm.springbootinit.model.entity.Class;
@@ -22,6 +19,8 @@ import com.sjxm.springbootinit.result.PageResult;
 import com.sjxm.springbootinit.service.AccountService;
 import com.sjxm.springbootinit.service.ClassService;
 import com.sjxm.springbootinit.service.SchoolService;
+import com.sjxm.springbootinit.utils.ExcelImportUtil;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
@@ -29,8 +28,12 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
+import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
 * @author sijixiamu
@@ -38,6 +41,7 @@ import java.util.List;
 * @createDate 2024-11-18 19:40:07
 */
 @Service
+@Slf4j
 public class AccountServiceImpl extends ServiceImpl<AccountMapper, Account>
     implements AccountService{
 
@@ -382,6 +386,138 @@ public class AccountServiceImpl extends ServiceImpl<AccountMapper, Account>
         String currentId = BaseContext.getCurrentId();
         return this.getById(Long.parseLong(currentId));
     }
+
+
+    @Override
+    public void importStudents(InputStream inputStream,Long classId){
+        ExcelImportUtil.importExcel(inputStream, StudentImportExcelDTO.class,classId,this::excelAddStudents);
+    }
+
+    @Transactional(rollbackFor = Exception.class)
+    public void excelAddStudents(List<StudentImportExcelDTO> list,Long classId){
+        List<String> errorMsgs = new ArrayList<>();
+        for(StudentImportExcelDTO studentImportExcelDTO:list){
+            String errorMsg = validateStudentExcel(studentImportExcelDTO);
+            if(errorMsg!=null){
+                errorMsgs.add(String.format("第%s行：%s", studentImportExcelDTO.getUserId(), errorMsg));
+            }
+        }
+
+        // 如果存在校验错误，抛出异常
+        if (!errorMsgs.isEmpty()) {
+            log.info("Excel数据校验失败：\n{}",String.join("\n", errorMsgs));
+            throw new ExcelImportException(MessageConstant.EXCEL_IMPORT_ERROR);
+        }
+
+        // 2. 数据转换
+        List<Account> accountList = list.stream()
+                .map(studentImportExcelDTO -> convertToStudentAccount(studentImportExcelDTO,classId))
+                .collect(Collectors.toList());
+
+        // 3. 数据去重（假设根据用户名去重）
+        List<String> userIds = accountList.stream()
+                .map(Account::getUserId)
+                .collect(Collectors.toList());
+
+        LambdaQueryWrapper<Account> accountLambdaQueryWrapper = new LambdaQueryWrapper<>();
+        accountLambdaQueryWrapper.in(Account::getUserId,userIds);
+        List<Account> existingStudents = this.list(accountLambdaQueryWrapper);
+        Map<String, Account> existingStudentMap = existingStudents.stream()
+                .collect(Collectors.toMap(Account::getUserId, user -> user));
+
+        // 4. 分离新增和更新的数据
+        List<Account> toInsert = new ArrayList<>();
+        List<Account> toUpdate = new ArrayList<>();
+
+        for (Account account : accountList) {
+            if (existingStudentMap.containsKey(account.getUserId())) {
+                // 设置ID等必要字段
+                Account existAccount = existingStudentMap.get(account.getUserId());
+                account.setAccountId(existAccount.getAccountId());
+                // 设置不应被更新的字段
+                account.setCreateTime(existAccount.getCreateTime());
+                account.setCreateUser(existAccount.getCreateUser());
+                toUpdate.add(account);
+            } else {
+                // 设置新增记录的默认值
+                account.setCreateTime(new Date());
+                account.setCreateUser(getLoginUser().getName());
+                toInsert.add(account);
+            }
+        }
+
+        // 5. 批量保存数据
+        if (!toInsert.isEmpty()) {
+            this.saveBatch(toInsert);
+            log.info("批量插入{}条数据", toInsert.size());
+        }
+
+        if (!toUpdate.isEmpty()) {
+            this.updateBatchById(toUpdate);
+            log.info("批量更新{}条数据", toUpdate.size());
+        }
+
+        //todo 班级学生数修改
+        Class aClass = classService.getById(classId);
+        aClass.setStudentNum(aClass.getStudentNum()+toInsert.size());
+        classService.updateById(aClass);
+
+    }
+
+    private String validateStudentExcel(StudentImportExcelDTO studentImportExcelDTO) {
+        StringBuilder errorMsg = new StringBuilder();
+
+        // 校验必填字段
+        if (StrUtil.isBlank(studentImportExcelDTO.getName())) {
+            errorMsg.append("姓名不能为空；");
+        } else if (studentImportExcelDTO.getName().length() > 50) {
+            errorMsg.append("姓名长度不能超过50个字符；");
+        }
+
+
+//        // 校验邮箱格式（如果有）
+//        if (StrUtil.isNotBlank(studentImportExcelDTO.getEmail())) {
+//            String emailRegex = "^[A-Za-z0-9+_.-]+@(.+)$";
+//            if (!userExcel.getEmail().matches(emailRegex)) {
+//                errorMsg.append("邮箱格式不正确；");
+//            }
+//        }
+
+        // 校验手机号格式（如果有）
+        if (StrUtil.isNotBlank(studentImportExcelDTO.getPhone())) {
+            String phoneRegex = "^1[3-9]\\d{9}$";
+            if (!studentImportExcelDTO.getPhone().matches(phoneRegex)) {
+                errorMsg.append("手机号格式不正确；");
+            }
+        }
+
+        return errorMsg.length() > 0 ? errorMsg.toString() : null;
+    }
+
+    /**
+     * 转换Excel数据为实体类
+     */
+    private Account convertToStudentAccount(StudentImportExcelDTO studentImportExcelDTO,Long classId) {
+        Account account = new Account();
+        // 基本信息转换
+        account.setUserId(studentImportExcelDTO.getUserId());
+        account.setName(studentImportExcelDTO.getName());
+        account.setPhone(studentImportExcelDTO.getPhone());
+
+        Class aClass = classService.getById(classId);
+        Long schoolId = aClass.getSchoolId();
+        account.setClassId(classId);
+        account.setSchoolId(schoolId);
+
+        account.setPassword("123456");
+        account.setAuth(0);
+        account.setCreateUser(getLoginUser().getName());
+        account.setUpdateUser(getLoginUser().getName());
+
+        return account;
+    }
+
+
 }
 
 

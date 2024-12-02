@@ -50,4 +50,6 @@ public class MessageConstant {
 
     public static final String CHAPTER_NOT_FOUND_ERROR = "该章节记录未找到";
 
+    public static final String EXCEL_IMPORT_ERROR = "excel导入错误";
+
 }

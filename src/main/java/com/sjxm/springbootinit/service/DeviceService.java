@@ -6,6 +6,8 @@ import com.sjxm.springbootinit.model.dto.DevicePageQueryDTO;
 import com.sjxm.springbootinit.model.entity.Device;
 import com.sjxm.springbootinit.result.PageResult;
 
+import java.io.InputStream;
+
 /**
 * @author sijixiamu
 * @description 针对表【device】的数据库操作Service
@@ -22,4 +24,6 @@ public interface DeviceService extends IService<Device> {
     void clearBindWithClass(Long deviceId);
 
     void delete(Long deviceId);
+
+    void importDevices(InputStream inputStream, Long schoolId);
 }

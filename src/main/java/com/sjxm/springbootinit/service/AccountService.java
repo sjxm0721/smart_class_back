@@ -10,6 +10,8 @@ import com.sjxm.springbootinit.model.vo.AccountPageVO;
 import com.sjxm.springbootinit.result.PageResult;
 
 import javax.servlet.http.HttpServletRequest;
+import java.io.InputStream;
+import java.util.List;
 
 /**
 * @author sijixiamu
@@ -39,4 +41,6 @@ public interface AccountService extends IService<Account> {
     long teacherNumber(Long schoolId, Long classId);
 
     Account getLoginUser();
+
+    void importStudents(InputStream inputStream,Long classId);
 }

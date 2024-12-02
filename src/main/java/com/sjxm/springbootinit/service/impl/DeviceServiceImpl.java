@@ -8,7 +8,9 @@ import com.sjxm.springbootinit.constant.MessageConstant;
 import com.sjxm.springbootinit.exception.*;
 import com.sjxm.springbootinit.mapper.ResultMapper;
 import com.sjxm.springbootinit.model.dto.DeviceAddOrUpdateDTO;
+import com.sjxm.springbootinit.model.dto.DeviceImportExcelDTO;
 import com.sjxm.springbootinit.model.dto.DevicePageQueryDTO;
+import com.sjxm.springbootinit.model.dto.StudentImportExcelDTO;
 import com.sjxm.springbootinit.model.entity.*;
 import com.sjxm.springbootinit.mapper.DeviceMapper;
 import com.sjxm.springbootinit.model.entity.Class;
@@ -16,15 +18,21 @@ import com.sjxm.springbootinit.model.vo.DeviceVO;
 import com.sjxm.springbootinit.result.PageResult;
 import com.sjxm.springbootinit.service.*;
 import com.sjxm.springbootinit.utils.DateTransferUtil;
+import com.sjxm.springbootinit.utils.ExcelImportUtil;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
+import java.io.InputStream;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
 * @author sijixiamu
@@ -32,6 +40,7 @@ import java.util.List;
 * @createDate 2024-11-18 19:40:44
 */
 @Service
+@Slf4j
 public class DeviceServiceImpl extends ServiceImpl<DeviceMapper, Device>
     implements DeviceService{
 
@@ -43,16 +52,13 @@ public class DeviceServiceImpl extends ServiceImpl<DeviceMapper, Device>
     @Lazy
     private SchoolService schoolService;
 
-//    @Resource
-//    @Lazy
-//    private StudentService studentService;
 
     @Resource
     @Lazy
     private ResultService resultService;
 
     @Resource
-    private ResultMapper resultMapper;
+    private AccountService accountService;
 
     @Override
     public PageResult myPage(DevicePageQueryDTO devicePageQueryDTO) {
@@ -150,7 +156,7 @@ public class DeviceServiceImpl extends ServiceImpl<DeviceMapper, Device>
 
         Device device=new Device();
         BeanUtils.copyProperties(deviceAddOrUpdateDTO,device);
-        if(!deviceAddOrUpdateDTO.getLastRepairTime().isEmpty())
+        if(!StrUtil.isBlankIfStr(deviceAddOrUpdateDTO.getLastRepairTime()))
         {
             device.setLastRepairTime(DateTransferUtil.transfer(LocalDateTime.parse(deviceAddOrUpdateDTO.getLastRepairTime().replace(" ","T"))));
         }
@@ -231,7 +237,84 @@ public class DeviceServiceImpl extends ServiceImpl<DeviceMapper, Device>
 
         this.removeById(deviceId);
     }
-}
+
+    @Override
+    public void importDevices(InputStream inputStream, Long schoolId) {
+        ExcelImportUtil.importExcel(inputStream, DeviceImportExcelDTO.class,schoolId,this::excelAddDevices);
+    }
+
+    @Transactional(rollbackFor = Exception.class)
+    public void excelAddDevices(List<DeviceImportExcelDTO> list,Long schoolId) {
+
+        List<Device> deviceList = list.stream()
+                .map(deviceImportExcelDTO -> convertToStudentAccount(deviceImportExcelDTO,schoolId))
+                .collect(Collectors.toList());
+
+        // 3. 数据去重（假设根据用户名去重）
+        List<String> deviceNames = deviceList.stream()
+                .map(Device::getDeviceName)
+                .collect(Collectors.toList());
+
+        LambdaQueryWrapper<Device> deviceLambdaQueryWrapper = new LambdaQueryWrapper<>();
+        deviceLambdaQueryWrapper.in(Device::getDeviceName,deviceNames);
+        List<Device> existingDevices = this.list(deviceLambdaQueryWrapper);
+        Map<String, Device> existingDeviceMap = existingDevices.stream()
+                .collect(Collectors.toMap(Device::getDeviceName, device -> device));
+
+        // 4. 分离新增和更新的数据
+        List<Device> toInsert = new ArrayList<>();
+        List<Device> toUpdate = new ArrayList<>();
+
+        for (Device device : deviceList) {
+            if (existingDeviceMap.containsKey(device.getDeviceName())) {
+                // 设置ID等必要字段
+                Device existDevice = existingDeviceMap.get(device.getDeviceName());
+                device.setDeviceId(existDevice.getDeviceId());
+                // 设置不应被更新的字段
+                device.setCreateTime(existDevice.getCreateTime());
+                device.setCreateUser(existDevice.getCreateUser());
+                toUpdate.add(device);
+            } else {
+                // 设置新增记录的默认值
+                device.setCreateTime(new Date());
+                device.setCreateUser(accountService.getLoginUser().getName());
+                toInsert.add(device);
+            }
+        }
+
+        // 5. 批量保存数据
+        if (!toInsert.isEmpty()) {
+            this.saveBatch(toInsert);
+            log.info("批量插入{}条数据", toInsert.size());
+        }
+
+        if (!toUpdate.isEmpty()) {
+            this.updateBatchById(toUpdate);
+            log.info("批量更新{}条数据", toUpdate.size());
+        }
+
+        //todo 学校设备数修改
+        School school = schoolService.getById(schoolId);
+        school.setDeviceNum(school.getDeviceNum()+toInsert.size());
+        schoolService.updateById(school);
+
+    }
+
+    public Device convertToStudentAccount(DeviceImportExcelDTO deviceImportExcelDTO,Long schoolId){
+        Device device = new Device();
+        device.setDeviceName(deviceImportExcelDTO.getDeviceName());
+        device.setSchoolId(schoolId);
+        device.setTestNum(0);
+        device.setIsFault(0);
+        device.setInUse(0);
+        Account loginUser = accountService.getLoginUser();
+        device.setCreateUser(loginUser.getName());
+        device.setUpdateUser(loginUser.getName());
+        return device;
+    }
+
+
+    }
 
 
 

@@ -11,6 +11,7 @@ import com.sjxm.springbootinit.service.SubmitService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
@@ -43,8 +44,12 @@ public class HomeWorkController {
 
     @DeleteMapping("/delete")
     @ApiOperation("删除作业")
+    @Transactional
     public Result delete(Long homeworkId){
         homeworkService.removeById(homeworkId);
+        LambdaQueryWrapper<Submit> submitLambdaQueryWrapper = new LambdaQueryWrapper<>();
+        submitLambdaQueryWrapper.eq(Submit::getHomeworkId,homeworkId);
+        submitService.remove(submitLambdaQueryWrapper);
         return Result.success();
     }
 
@@ -53,7 +58,6 @@ public class HomeWorkController {
     @PostMapping("/add")
     @ApiOperation("布置作业")
     public Result add(@RequestBody HomeworkAddDTO homeworkAddDTO){
-
         homeworkService.add(homeworkAddDTO);
         return Result.success();
     }

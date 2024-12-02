@@ -1,6 +1,9 @@
 package com.sjxm.springbootinit.controller;
 
 import cn.hutool.core.collection.CollUtil;
+import cn.hutool.core.util.StrUtil;
+import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
+import com.sjxm.springbootinit.model.dto.CommentDTO;
 import com.sjxm.springbootinit.model.dto.SubmitAddDTO;
 import com.sjxm.springbootinit.model.dto.SubmitQueryDTO;
 import com.sjxm.springbootinit.model.entity.Submit;
@@ -13,6 +16,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
+import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
 
@@ -69,6 +73,23 @@ public class SubmitController {
 
         submit.setResources(sb.toString());
         submitService.save(submit);
+        return Result.success();
+    }
+
+
+    @PostMapping("/give-comment")
+    public Result giveComment(@RequestBody CommentDTO commentDTO){
+        Long id = commentDTO.getId();
+        Long score = commentDTO.getScore();
+        String comment = commentDTO.getComment();
+
+        LambdaUpdateWrapper<Submit> lambdaUpdateWrapper = new LambdaUpdateWrapper<>();
+        lambdaUpdateWrapper.set(score!=null,Submit::getScore, BigDecimal.valueOf(score))
+                .set(!StrUtil.isBlankIfStr(comment),Submit::getComment,comment)
+                .set(Submit::getIsCorrected,1)
+                .set(Submit::getCorrectTime,new Date())
+                .eq(Submit::getId,id);
+        submitService.update(lambdaUpdateWrapper);
         return Result.success();
     }
 }

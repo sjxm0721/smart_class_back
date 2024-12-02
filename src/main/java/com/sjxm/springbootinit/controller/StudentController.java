@@ -23,9 +23,12 @@ import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
@@ -97,6 +100,10 @@ public class StudentController {
 
         Account account = new Account();
         BeanUtil.copyProperties(studentAddOrUpdateDTO,account);
+        account.setPassword("123456");
+        account.setAuth(0);
+        account.setCreateUser(accountService.getLoginUser().getName());
+        account.setUpdateUser(accountService.getLoginUser().getName());
         accountService.save(account);
 
         return Result.success();
@@ -149,6 +156,17 @@ public class StudentController {
         List<Account> studentList = accountService.list(studentLambdaQueryWrapper);
         List<StudentVO> collect = studentList.stream().map(this::account2StudentVO).collect(Collectors.toList());
         return Result.success(collect);
+    }
+
+
+    @PostMapping("/import")
+    public Result importUsers(@RequestParam("file") MultipartFile file,Long classId) {
+        try {
+            accountService.importStudents(file.getInputStream(),classId);
+            return Result.success("导入成功");
+        } catch (IOException e) {
+            return Result.error(MessageConstant.EXCEL_IMPORT_ERROR);
+        }
     }
 
 
