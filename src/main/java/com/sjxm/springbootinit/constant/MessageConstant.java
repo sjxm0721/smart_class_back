@@ -52,4 +52,6 @@ public class MessageConstant {
 
     public static final String EXCEL_IMPORT_ERROR = "excel导入错误";
 
+    public static final String BORROW_NOT_FOUND_ERROR = "对应设备申请未找到";
+
 }

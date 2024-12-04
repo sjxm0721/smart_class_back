@@ -1,5 +1,6 @@
 package com.sjxm.springbootinit.service.impl;
 
+import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
@@ -8,17 +9,12 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.sjxm.springbootinit.constant.MessageConstant;
 import com.sjxm.springbootinit.exception.*;
 import com.sjxm.springbootinit.model.dto.MyClassDTO;
-import com.sjxm.springbootinit.model.entity.Account;
-import com.sjxm.springbootinit.model.entity.Class;
+import com.sjxm.springbootinit.model.entity.*;
 import com.sjxm.springbootinit.mapper.ClassMapper;
-import com.sjxm.springbootinit.model.entity.School;
-import com.sjxm.springbootinit.model.entity.Student;
+import com.sjxm.springbootinit.model.entity.Class;
 import com.sjxm.springbootinit.model.vo.MyClassVO;
 import com.sjxm.springbootinit.result.PageResult;
-import com.sjxm.springbootinit.service.AccountService;
-import com.sjxm.springbootinit.service.ClassService;
-import com.sjxm.springbootinit.service.SchoolService;
-import com.sjxm.springbootinit.service.StudentService;
+import com.sjxm.springbootinit.service.*;
 import org.springframework.beans.BeanUtils;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
@@ -29,6 +25,7 @@ import javax.annotation.Resource;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 /**
 * @author sijixiamu
@@ -46,6 +43,13 @@ public class ClassServiceImpl extends ServiceImpl<ClassMapper, Class>
     @Resource
     private AccountService accountService;
 
+    @Resource
+    private ClstearelationService clstearelationService;
+
+    @Resource
+    @Lazy
+    private DeviceService deviceService;
+
     public MyClassVO obj2VO(Class myClass){
         MyClassVO myClassVO = new MyClassVO();
         BeanUtils.copyProperties(myClass,myClassVO);
@@ -55,14 +59,23 @@ public class ClassServiceImpl extends ServiceImpl<ClassMapper, Class>
             throw new SchoolNotExistException(MessageConstant.SCHOOL_NOT_EXIST);
         }
         myClassVO.setSchoolName(school.getSchoolName());
-        Long teacherId = myClass.getTeacherId();
-        if(teacherId!=null){
-            Account account = accountService.getById(teacherId);
-            if(account==null){
-                throw new AccountNotFoundException(MessageConstant.ACCOUNT_NOT_FOUND);
-            }
-            myClassVO.setTeacherName(account.getName());
-            myClassVO.setPhone(account.getPhone());
+
+        Long classId = myClass.getClassId();
+        LambdaQueryWrapper<Device> deviceLambdaQueryWrapper = new LambdaQueryWrapper<>();
+//        deviceLambdaQueryWrapper.eq(Device::getClassId,classId);
+        myClassVO.setDeviceNum(deviceService.count(deviceLambdaQueryWrapper));
+        LambdaQueryWrapper<Account> studentLambdaQueryWrapper = new LambdaQueryWrapper<>();
+        studentLambdaQueryWrapper.eq(Account::getClassId,classId).eq(Account::getAuth,0);
+        myClassVO.setStudentNum(accountService.count(studentLambdaQueryWrapper));
+
+        LambdaQueryWrapper<Clstearelation> clstearelationLambdaQueryWrapper = new LambdaQueryWrapper<>();
+        clstearelationLambdaQueryWrapper.eq(Clstearelation::getClassId,classId);
+        List<Clstearelation> clstearelationList = clstearelationService.list(clstearelationLambdaQueryWrapper);
+        List<Long> teacherIds = clstearelationList.stream().map(Clstearelation::getTeacherId).collect(Collectors.toList());
+        if(!CollUtil.isEmpty(teacherIds)){
+            List<Account> teacherList = accountService.listByIds(teacherIds);
+            myClassVO.setTeacherNum((long) teacherList.size());
+            myClassVO.setTeacherList(teacherList);
         }
         return myClassVO;
     }
@@ -116,117 +129,39 @@ public class ClassServiceImpl extends ServiceImpl<ClassMapper, Class>
     }
 
     @Override
-    @Transactional
     public void add(MyClassDTO myClassDTO) {
         Long schoolId=myClassDTO.getSchoolId();
         String className=myClassDTO.getClassName();
-        School school = schoolService.getById(schoolId);
-        if(school==null){
-            throw new SchoolNotExistException(MessageConstant.SCHOOL_NOT_EXIST);
-        }
-        school.setClassNum(school.getClassNum()+1);
-        schoolService.updateById(school);
 
         Class myClass = Class.builder()
                 .className(className)
                 .schoolId(schoolId)
-                .deviceNum(0)
-                .studentNum(0)
                 .build();
         this.save(myClass);
     }
 
     @Override
-    @Transactional
     public void myUpdate(MyClassDTO myClassDTO) {
         Long classId = myClassDTO.getClassId();
+        Long schoolId = myClassDTO.getSchoolId();
+        String className = myClassDTO.getClassName();
 
-        Class oldClass = this.getById(classId);
-        if(oldClass==null){
-            throw new ClassNotExistException(MessageConstant.CLASS_NOT_EXIST);
-        }
-        Long newSchoolId = myClassDTO.getSchoolId();
-        Long oldSchoolId = oldClass.getSchoolId();
-        if(oldClass.getTeacherId()!=null&& !Objects.equals(newSchoolId, oldSchoolId)){
-            throw new BaseException(MessageConstant.CLASS_WITH_TEACHER_EDIT_ERROR);
-        }
-        School oldSchool = schoolService.getById(oldSchoolId);
-        if(oldSchool==null){
-            throw new SchoolNotExistException(MessageConstant.SCHOOL_NOT_EXIST);
-        }
-        oldSchool.setClassNum(oldSchool.getClassNum()-1);
-        schoolService.updateById(oldSchool);
-        School newSchool = schoolService.getById(newSchoolId);
-        if(newSchool==null){
-            throw new SchoolNotExistException(MessageConstant.SCHOOL_NOT_EXIST);
-        }
-        newSchool.setClassNum(newSchool.getClassNum()+1);
-        schoolService.updateById(newSchool);
+        LambdaUpdateWrapper<Class> lambdaUpdateWrapper = new LambdaUpdateWrapper<>();
+        lambdaUpdateWrapper.set(schoolId!=null,Class::getSchoolId,schoolId)
+                .set(!StrUtil.isBlankIfStr(className),Class::getClassName,className)
+                .eq(classId!=null,Class::getClassId,classId);
 
-        Class myClass = new Class();
-
-        BeanUtils.copyProperties(myClassDTO,myClass);
-
-        this.updateById(myClass);
+        this.update(lambdaUpdateWrapper);
     }
 
     @Override
-    @Transactional(propagation = Propagation.REQUIRED)
-    public void delete(Long schoolId, Long classId) {
-        Class myClass = this.getById(classId);
-        Integer deviceNum = myClass.getDeviceNum();
-        if(deviceNum>0){
-            throw new ClassWithDeviceDeleteErrorException(MessageConstant.CLASS_WITH_DEVICE_DELETE_ERROR);
-        }
-
-        LambdaQueryWrapper<Account> lambdaQueryWrapper = new LambdaQueryWrapper<>();
-        lambdaQueryWrapper.eq(Account::getClassId,classId);
-        List<Account> list = accountService.list(lambdaQueryWrapper);
-
-        if(list!=null&&list.size()>0){
-            throw new ClassWithAccountDeleteException(MessageConstant.CLASS_WITH_ACCOUNT_DELETE_FAILED);
-        }
-
-        School school = schoolService.getById(schoolId);
-
-        if(school==null){
-            throw new SchoolNotExistException(MessageConstant.SCHOOL_NOT_EXIST);
-        }
-
-        school.setClassNum(school.getClassNum()-1);
-
-        schoolService.updateById(school);
-
-        LambdaQueryWrapper<Account> accountLambdaQueryWrapper = new LambdaQueryWrapper<>();
-        accountLambdaQueryWrapper.eq(Account::getClassId,classId).eq(Account::getAuth,0);
-        accountService.remove(accountLambdaQueryWrapper);
-
+    public void delete(Long classId) {
         this.removeById(classId);
     }
 
     @Override
     public void clearTeacher(Long classId) {
-        Class myClass = this.getById(classId);
-        if(myClass==null){
-            throw new ClassNotExistException(MessageConstant.CLASS_NOT_EXIST);
-        }
 
-        Long teacherId = myClass.getTeacherId();
-        Account account = accountService.getById(teacherId);
-
-        if(account==null){
-            throw new AccountNotFoundException(MessageConstant.ACCOUNT_NOT_FOUND);
-        }
-
-        if(Objects.equals(account.getClassId(), classId)){
-            LambdaUpdateWrapper<Account> accountLambdaUpdateWrapper = new LambdaUpdateWrapper<>();
-            accountLambdaUpdateWrapper.eq(Account::getAccountId,account.getAccountId()).set(Account::getClassId,null);
-            accountService.update(accountLambdaUpdateWrapper);
-        }
-
-        myClass.setTeacherId(null);
-
-        this.updateById(myClass);
     }
 
 

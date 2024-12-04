@@ -1,6 +1,9 @@
 package com.sjxm.springbootinit.model.entity;
 
-import com.baomidou.mybatisplus.annotation.*;
+import com.baomidou.mybatisplus.annotation.TableField;
+import com.baomidou.mybatisplus.annotation.TableId;
+import com.baomidou.mybatisplus.annotation.TableLogic;
+import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.Data;
 
 import java.io.Serializable;
@@ -8,34 +11,26 @@ import java.util.Date;
 
 /**
  * 
- * @TableName school
+ * @TableName clsTeaRelation
  */
-@TableName(value ="school")
+@TableName(value ="clsTeaRelation")
 @Data
-public class School implements Serializable {
+public class Clstearelation implements Serializable {
     /**
-     * 学校id，主键
+     * 
      */
-    @TableId(type = IdType.AUTO)
-    private Long schoolId;
+    @TableId
+    private Long id;
 
     /**
      * 
      */
-    private String schoolName;
+    private Long classId;
 
     /**
-     * 学校的详细地址
-
+     * 
      */
-    private String address;
-
-
-    /**
-     * 学校图片
-     */
-    private String pic;
-
+    private Long teacherId;
 
     /**
      * 
@@ -43,7 +38,7 @@ public class School implements Serializable {
     private String createUser;
 
     /**
-     * 创建时间
+     * 测试时间
      */
     private Date createTime;
 

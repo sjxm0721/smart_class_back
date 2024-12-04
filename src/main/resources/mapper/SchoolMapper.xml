@@ -8,10 +8,7 @@
             <id property="schoolId" column="school_id" jdbcType="INTEGER"/>
             <result property="schoolName" column="school_name" jdbcType="VARCHAR"/>
             <result property="address" column="address" jdbcType="VARCHAR"/>
-            <result property="masterId" column="master_id" jdbcType="INTEGER"/>
-            <result property="deviceNum" column="device_num" jdbcType="INTEGER"/>
             <result property="pic" column="pic" jdbcType="VARCHAR"/>
-            <result property="classNum" column="class_num" jdbcType="INTEGER"/>
             <result property="createUser" column="create_user" jdbcType="VARCHAR"/>
             <result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>
             <result property="updateUser" column="update_user" jdbcType="VARCHAR"/>
@@ -21,7 +18,7 @@
 
     <sql id="Base_Column_List">
         school_id,school_name,address,
-        master_id,device_num,pic,
+        pic,
         class_num,create_user,create_time,
         update_user,update_time,delete_flag
     </sql>

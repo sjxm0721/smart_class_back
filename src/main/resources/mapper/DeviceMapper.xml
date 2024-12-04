@@ -8,8 +8,6 @@
             <id property="deviceId" column="device_id" jdbcType="INTEGER"/>
             <result property="deviceName" column="device_name" jdbcType="VARCHAR"/>
             <result property="schoolId" column="school_id" jdbcType="INTEGER"/>
-            <result property="classId" column="class_id" jdbcType="INTEGER"/>
-            <result property="testNum" column="test_num" jdbcType="OTHER"/>
             <result property="lastRepairTime" column="last_repair_time" jdbcType="TIMESTAMP"/>
             <result property="isFault" column="is_fault" jdbcType="OTHER"/>
             <result property="inUse" column="in_use" jdbcType="OTHER"/>
@@ -18,13 +16,14 @@
             <result property="updateTime" column="update_time" jdbcType="TIMESTAMP"/>
             <result property="updateUser" column="update_user" jdbcType="VARCHAR"/>
             <result property="deleteFlag" column="delete_flag" jdbcType="TINYINT"/>
+            <result property="type" column="type" jdbcType="VARCHAR"/>
     </resultMap>
 
     <sql id="Base_Column_List">
         device_id,device_name,school_id,
-        class_id,test_num,last_repair_time,
+        test_num,last_repair_time,
         is_fault,in_use,create_time,
         create_user,update_time,update_user,
-        delete_flag
+        delete_flag,type
     </sql>
 </mapper>

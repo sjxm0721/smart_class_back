@@ -15,4 +15,6 @@ public class DevicePageQueryDTO implements Serializable {
     private Integer currentPage;
 
     private Integer pageSize;
+
+    private Integer type;
 }

@@ -35,20 +35,6 @@ public class Class implements Serializable {
      */
     private Long schoolId;
 
-    /**
-     * 班主任id
-     */
-    private Long teacherId;
-
-    /**
-     * 设备数量
-     */
-    private Integer deviceNum;
-
-    /**
-     * 学生数量
-     */
-    private Integer studentNum;
 
     /**
      * 创建时间

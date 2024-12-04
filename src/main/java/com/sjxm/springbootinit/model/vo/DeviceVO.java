@@ -24,7 +24,9 @@ public class DeviceVO {
 
     private String className;
 
-    private Integer testNum;
+    private Long studentId;
+
+    private String studentName;
 
     private LocalDateTime lastRepairTime;
 
@@ -39,4 +41,6 @@ public class DeviceVO {
     private LocalDateTime updateTime;
 
     private String updateUser;
+
+    private String typeValue;
 }

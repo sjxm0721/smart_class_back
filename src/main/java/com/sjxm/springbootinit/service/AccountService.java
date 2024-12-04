@@ -38,9 +38,9 @@ public interface AccountService extends IService<Account> {
 
     void delete(Long accountId);
 
-    long teacherNumber(Long schoolId, Long classId);
-
     Account getLoginUser();
 
     void importStudents(InputStream inputStream,Long classId);
+
+    void importTeachers(InputStream inputStream, Long schoolId);
 }

@@ -34,8 +34,6 @@ public class HomeworkServiceImpl extends ServiceImpl<HomeworkMapper, Homework>
     implements HomeworkService{
 
 
-//    @Resource
-//    private StudentService studentService;
 
     @Resource
     private ClassService classService;
@@ -69,7 +67,11 @@ public class HomeworkServiceImpl extends ServiceImpl<HomeworkMapper, Homework>
         submitLambdaQueryWrapper.eq(Submit::getHomeworkId,homework.getId());
         List<Submit> list = submitService.list(submitLambdaQueryWrapper);
         homework.setCurNum(list.size());
-        homework.setTotalNum(aClass.getStudentNum());
+
+
+        LambdaQueryWrapper<Account> accountWrapper = new LambdaQueryWrapper<>();
+        accountWrapper.eq(Account::getClassId,aClass.getClassId()).eq(Account::getAuth,0);
+        homework.setTotalNum((int) accountService.count(accountWrapper));
 
         Set<Long> set = list.stream().map(Submit::getStudentId).collect(Collectors.toSet());
         LambdaQueryWrapper<Account> accountLambdaQueryWrapper = new LambdaQueryWrapper<>();

@@ -1,5 +1,6 @@
 package com.sjxm.springbootinit.service.impl;
 
+import cn.hutool.core.collection.CollUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.sjxm.springbootinit.constant.MessageConstant;
@@ -52,17 +53,6 @@ public class StudentServiceImpl extends ServiceImpl<StudentMapper, Student>
         Long classId = dto.getClassId();
 //        String studentIdNumber = dto.getStudentIdNumber();
 
-        School school = schoolService.getById(schoolId);
-        if(school==null){
-            throw new SchoolNotExistException(MessageConstant.SCHOOL_NOT_EXIST);
-        }
-
-        Class myClass = classService.getById(classId);
-        if(myClass==null){
-            throw new ClassNotExistException(MessageConstant.CLASS_NOT_EXIST);
-        }
-        myClass.setStudentNum(myClass.getStudentNum()+1);
-        classService.updateById(myClass);
 
         LambdaQueryWrapper<Student> lambdaQueryWrapper = new LambdaQueryWrapper<>();
         lambdaQueryWrapper.eq(Student::getClassId,classId);
@@ -102,43 +92,10 @@ public class StudentServiceImpl extends ServiceImpl<StudentMapper, Student>
     }
 
     @Override
-    @Transactional
     public void delete(List<Long> ids) {
-        Long classId= null;
-        for (Long id : ids) {
-            Student student = this.getById(id);
-            if(student==null){
-                throw new StudentNotExistException(MessageConstant.STUDENT_NOT_EXIST);
-            }
-            classId = student.getClassId();
-            List<DeviceTestNumber> deviceUsageNumber = resultMapper.getStudentUsedDevice(student);
-            if(deviceUsageNumber.size()!=0)
-            {
-                for (DeviceTestNumber deviceTestNumber : deviceUsageNumber) {
-                    Long deviceId = deviceTestNumber.getDeviceId();
-                    Integer deviceUsedNum = deviceTestNumber.getDeviceUsedNum();
-                    Device device = deviceService.getById(deviceId);
-                    if(device==null){
-                        throw new DeviceNotExistException(MessageConstant.DEVICE_NOT_EXIST);
-                    }
-                    device.setTestNum(device.getTestNum()-deviceUsedNum);
-                    deviceService.updateById(device);
-                }
-            }
-            LambdaQueryWrapper<Result> resultLambdaQueryWrapper = new LambdaQueryWrapper<>();
-            resultLambdaQueryWrapper.eq(Result::getStudentId,id);
-            resultService.remove(resultLambdaQueryWrapper);
-            this.removeById(id);
-        }
-        Integer size = ids.size();
-        if(classId!=null){
-            Class myClass = classService.getById(classId);
-            if(myClass==null){
-                throw new ClassNotExistException(MessageConstant.CLASS_NOT_EXIST);
-            }
-            myClass.setStudentNum(myClass.getStudentNum()-size);
-            classService.updateById(myClass);
-        }
+        LambdaQueryWrapper<Student> lambdaQueryWrapper = new LambdaQueryWrapper<>();
+        lambdaQueryWrapper.in(!CollUtil.isEmpty(ids),Student::getStudentId,ids);
+        this.remove(lambdaQueryWrapper);
     }
 
     @Override

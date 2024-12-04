@@ -1,17 +1,24 @@
 package com.sjxm.springbootinit.controller;
 
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.sjxm.springbootinit.constant.JwtClaimsConstant;
+import com.sjxm.springbootinit.constant.MessageConstant;
 import com.sjxm.springbootinit.model.dto.AccountAddOrUpdateDTO;
 import com.sjxm.springbootinit.model.dto.AccountDTO;
 import com.sjxm.springbootinit.model.dto.AccountPageQueryDTO;
 import com.sjxm.springbootinit.model.dto.PasswordChangeDTO;
 import com.sjxm.springbootinit.model.entity.Account;
+import com.sjxm.springbootinit.model.entity.Class;
+import com.sjxm.springbootinit.model.entity.Clstearelation;
 import com.sjxm.springbootinit.model.vo.AccountPageVO;
 import com.sjxm.springbootinit.model.vo.AccountVO;
 import com.sjxm.springbootinit.properties.JwtProperties;
 import com.sjxm.springbootinit.result.PageResult;
 import com.sjxm.springbootinit.result.Result;
 import com.sjxm.springbootinit.service.AccountService;
+import com.sjxm.springbootinit.service.ClassService;
+import com.sjxm.springbootinit.service.ClstearelationService;
+import com.sjxm.springbootinit.service.SchoolService;
 import com.sjxm.springbootinit.utils.JwtUtil;
 import io.jsonwebtoken.Claims;
 import io.swagger.annotations.Api;
@@ -19,9 +26,15 @@ import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import javax.annotation.Resource;
+import java.io.IOException;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @RequestMapping("/admin/user")
 @RestController
@@ -34,6 +47,13 @@ public class AccountController {
 
     @Autowired
     private JwtProperties jwtProperties;
+
+    @Resource
+    private ClassService classService;
+
+
+    @Resource
+    private ClstearelationService clstearelationService;
 
 
 
@@ -142,9 +162,32 @@ public class AccountController {
 
     @GetMapping("/teacherNumber")
     @ApiOperation("查看教师数量")
-    public Result<Long> teacherNumber(Long schoolId,Long classId){
-        long number = accountService.teacherNumber(schoolId,classId);
-
+    public Result<Long> teacherNumber(Long schoolId){
+        LambdaQueryWrapper<Account> lambdaQueryWrapper = new LambdaQueryWrapper<>();
+        lambdaQueryWrapper.eq(Account::getSchoolId,schoolId)
+                .eq(Account::getAuth,2);
+        long number = accountService.count(lambdaQueryWrapper);
         return Result.success(number);
+    }
+
+
+    @PostMapping("/import")
+    public Result importUsers(@RequestParam("file") MultipartFile file, Long schoolId) {
+        try {
+            accountService.importTeachers(file.getInputStream(),schoolId);
+            return Result.success("导入成功");
+        } catch (IOException e) {
+            return Result.error(MessageConstant.EXCEL_IMPORT_ERROR);
+        }
+    }
+
+    @GetMapping("/unbind-teacher")
+    public Result<List<Account>> unBindTeacher(Long classId){
+        Class aClass = classService.getById(classId);
+        Long schoolId = aClass.getSchoolId();
+        LambdaQueryWrapper<Account> accountLambdaQueryWrapper = new LambdaQueryWrapper<>();
+        accountLambdaQueryWrapper.eq(Account::getSchoolId,schoolId).eq(Account::getAuth,2);
+        List<Account> list = accountService.list(accountLambdaQueryWrapper);
+        return Result.success(list);
     }
 }

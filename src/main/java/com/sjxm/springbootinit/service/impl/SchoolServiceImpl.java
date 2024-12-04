@@ -12,13 +12,16 @@ import com.sjxm.springbootinit.exception.SchoolWithDeviceDeleteFailedException;
 import com.sjxm.springbootinit.model.dto.SchoolPageQueryDTO;
 import com.sjxm.springbootinit.model.entity.Account;
 import com.sjxm.springbootinit.model.entity.Class;
+import com.sjxm.springbootinit.model.entity.Device;
 import com.sjxm.springbootinit.model.entity.School;
 import com.sjxm.springbootinit.mapper.SchoolMapper;
 import com.sjxm.springbootinit.model.vo.SchoolVO;
 import com.sjxm.springbootinit.result.PageResult;
 import com.sjxm.springbootinit.service.AccountService;
 import com.sjxm.springbootinit.service.ClassService;
+import com.sjxm.springbootinit.service.DeviceService;
 import com.sjxm.springbootinit.service.SchoolService;
+import me.chanjar.weixin.mp.bean.device.WxDeviceBindDeviceResult;
 import org.springframework.beans.BeanUtils;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
@@ -44,15 +47,26 @@ public class SchoolServiceImpl extends ServiceImpl<SchoolMapper, School>
     @Lazy
     private ClassService classService;
 
+    @Resource
+    @Lazy
+    private DeviceService deviceService;
+
     public SchoolVO obj2VO(School school){
+        Long schoolId = school.getSchoolId();
         SchoolVO schoolVO = new SchoolVO();
         BeanUtils.copyProperties(school, schoolVO);
-        Long masterId = school.getMasterId();
-        if (masterId != null) {
-            Account account = accountService.getById(masterId);
-            schoolVO.setMasterName(account.getName());
-            schoolVO.setPhone(account.getPhone());
-        }
+        LambdaQueryWrapper<Device> deviceLambdaQueryWrapper = new LambdaQueryWrapper<>();
+        deviceLambdaQueryWrapper.eq(Device::getSchoolId, schoolId);
+        schoolVO.setDeviceNum(deviceService.count(deviceLambdaQueryWrapper));
+        LambdaQueryWrapper<Class> classLambdaQueryWrapper = new LambdaQueryWrapper<>();
+        classLambdaQueryWrapper.eq(Class::getSchoolId, schoolId);
+        schoolVO.setClassNum(classService.count(classLambdaQueryWrapper));
+        LambdaQueryWrapper<Account> teacherLambdaQueryWrapper = new LambdaQueryWrapper<>();
+        teacherLambdaQueryWrapper.eq(Account::getSchoolId, schoolId).eq(Account::getAuth,2);
+        schoolVO.setTeacherNum(accountService.count(teacherLambdaQueryWrapper));
+        LambdaQueryWrapper<Account> studentLambdaQueryWrapper = new LambdaQueryWrapper<>();
+        studentLambdaQueryWrapper.eq(Account::getSchoolId, schoolId).eq(Account::getAuth,0);
+        schoolVO.setStudentNum(accountService.count(studentLambdaQueryWrapper));
         return schoolVO;
     }
 
@@ -61,7 +75,7 @@ public class SchoolServiceImpl extends ServiceImpl<SchoolMapper, School>
         String input = schoolPageQueryDTO.getInput();
         Page<School> page = new Page<>(schoolPageQueryDTO.getCurrentPage(), schoolPageQueryDTO.getPageSize());
         LambdaQueryWrapper<School> lambdaQueryWrapper = new LambdaQueryWrapper<>();
-        lambdaQueryWrapper.eq(!StrUtil.isBlankIfStr(input), School::getSchoolName, input).orderBy(true, false, School::getUpdateTime);
+        lambdaQueryWrapper.like(!StrUtil.isBlankIfStr(input), School::getSchoolName, input).orderBy(true, false, School::getUpdateTime);
         Page<School> newPage = this.page(page,lambdaQueryWrapper);
         Long total = newPage.getTotal();
         List<School> result = newPage.getRecords();
@@ -77,35 +91,6 @@ public class SchoolServiceImpl extends ServiceImpl<SchoolMapper, School>
     @Override
     @Transactional
     public void delete(Long schoolId) {
-        School school = this.getById(schoolId);
-        if(school==null)
-        {
-            throw new SchoolNotExistException(MessageConstant.SCHOOL_NOT_EXIST);
-        }
-        Integer deviceNum = school.getDeviceNum();
-        if(deviceNum>0){
-            throw new SchoolWithDeviceDeleteFailedException(MessageConstant.SCHOOL_WITH_DEVICE_DELETE_FAILED);
-        }
-        LambdaQueryWrapper<Account> accountLambdaQueryWrapper = new LambdaQueryWrapper<>();
-        accountLambdaQueryWrapper.eq(Account::getSchoolId,schoolId);
-        List<Account> list = accountService.list(accountLambdaQueryWrapper);
-        if(list!=null&&list.size()>0){
-            for (Account account : list) {
-                Long accountId = account.getAccountId();
-                accountService.delete(accountId);
-            }
-        }
-        //可以删除
-        LambdaQueryWrapper<Class> classLambdaQueryWrapper = new LambdaQueryWrapper<>();
-        classLambdaQueryWrapper.eq(Class::getSchoolId,schoolId);
-        List<Class> classListBySchoolId = classService.list(classLambdaQueryWrapper);
-        if(classListBySchoolId.size()!=0)
-        {
-            for (Class myClass : classListBySchoolId) {
-                Long classId = myClass.getClassId();
-                classService.delete(schoolId,classId);
-            }
-        }
         this.removeById(schoolId);
     }
 
@@ -115,16 +100,7 @@ public class SchoolServiceImpl extends ServiceImpl<SchoolMapper, School>
         if(school==null){
             throw new SchoolNotExistException(MessageConstant.SCHOOL_NOT_EXIST);
         }
-        SchoolVO schoolVO= new SchoolVO();
-        BeanUtils.copyProperties(school,schoolVO);
-        Long masterId = school.getMasterId();
-        Account account = accountService.getById(masterId);
-        if(account==null){
-            throw new AccountNotFoundException(MessageConstant.ACCOUNT_NOT_FOUND);
-        }
-        schoolVO.setMasterName(account.getName());
-        schoolVO.setPhone(account.getPhone());
-        return schoolVO;
+        return obj2VO(school);
     }
 
     @Override

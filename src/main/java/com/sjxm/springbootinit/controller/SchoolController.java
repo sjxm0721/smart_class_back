@@ -42,8 +42,6 @@ public class SchoolController {
     public Result add(@RequestBody SchoolDTO schoolDTO){
         School school = new School();
         BeanUtil.copyProperties(schoolDTO,school);
-        school.setClassNum(0);
-        school.setDeviceNum(0);
         schoolService.save(school);
         return Result.success();
     }

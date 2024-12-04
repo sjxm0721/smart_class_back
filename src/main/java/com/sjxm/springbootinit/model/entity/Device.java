@@ -2,6 +2,7 @@ package com.sjxm.springbootinit.model.entity;
 
 import cn.hutool.core.bean.BeanUtil;
 import com.baomidou.mybatisplus.annotation.*;
+import com.sjxm.springbootinit.model.enums.DeviceTypeEnum;
 import com.sjxm.springbootinit.model.vo.DeviceVO;
 import lombok.Data;
 
@@ -32,15 +33,6 @@ public class Device implements Serializable {
      */
     private Long schoolId;
 
-    /**
-     * 
-     */
-    private Long classId;
-
-    /**
-     * 测试数量
-     */
-    private Integer testNum;
 
     /**
      * 
@@ -86,9 +78,16 @@ public class Device implements Serializable {
     @TableField(exist = false)
     private static final long serialVersionUID = 1L;
 
+    private Integer type;
+
     public static DeviceVO obj2VO(Device device){
         DeviceVO deviceVO = new DeviceVO();
         BeanUtil.copyProperties(device,deviceVO);
+        Integer deviceType = device.getType();
+        DeviceTypeEnum enumByValue = DeviceTypeEnum.getEnumByValue(deviceType);
+        if (enumByValue != null) {
+            deviceVO.setTypeValue(enumByValue.getText());
+        }
         return deviceVO;
     }
 }

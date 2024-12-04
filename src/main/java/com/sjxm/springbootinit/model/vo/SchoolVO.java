@@ -18,17 +18,15 @@ public class SchoolVO {
 
     private String address;
 
-    private Long masterId;
-
-    private String phone;
-
-    private String masterName;
-
-    private Integer deviceNum;
-
     private String pic;
 
-    private Integer classNum;
+    private Long deviceNum;
+
+    private Long classNum;
+
+    private Long teacherNum;
+
+    private Long studentNum;
 
     private String createUser;
 

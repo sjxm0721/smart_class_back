@@ -1,11 +1,14 @@
 package com.sjxm.springbootinit.model.vo;
 
+import com.sjxm.springbootinit.model.entity.Account;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Data
 @NoArgsConstructor
@@ -20,15 +23,16 @@ public class MyClassVO {
 
     private String schoolName;
 
-    private Long teacherId;
-
-    private String teacherName;
 
     private String phone;
 
-    private Integer deviceNum;
+    private Long deviceNum;
 
-    private Integer studentNum;
+    private Long studentNum;
+
+    private Long teacherNum = 0l;
+
+    private List<Account> teacherList = new ArrayList<>();
 
     private LocalDateTime createTime;
 

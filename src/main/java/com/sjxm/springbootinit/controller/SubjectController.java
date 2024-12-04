@@ -50,4 +50,10 @@ public class SubjectController {
         return Result.success(subjectService.info(subjectId));
     }
 
+
+    @GetMapping("/export")
+    @PostMapping("导出学生课程数据")
+    public void export(Long subjectId){
+        
+    }
 }

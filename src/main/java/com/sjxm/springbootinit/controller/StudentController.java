@@ -7,17 +7,12 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.sjxm.springbootinit.constant.MessageConstant;
 import com.sjxm.springbootinit.exception.NoEnoughAuthException;
 import com.sjxm.springbootinit.model.dto.StudentAddOrUpdateDTO;
-import com.sjxm.springbootinit.model.entity.Account;
+import com.sjxm.springbootinit.model.entity.*;
 import com.sjxm.springbootinit.model.entity.Class;
-import com.sjxm.springbootinit.model.entity.School;
-import com.sjxm.springbootinit.model.entity.Student;
 import com.sjxm.springbootinit.model.vo.StudentNumberAndSightVO;
 import com.sjxm.springbootinit.model.vo.StudentVO;
 import com.sjxm.springbootinit.result.Result;
-import com.sjxm.springbootinit.service.AccountService;
-import com.sjxm.springbootinit.service.ClassService;
-import com.sjxm.springbootinit.service.SchoolService;
-import com.sjxm.springbootinit.service.StudentService;
+import com.sjxm.springbootinit.service.*;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
@@ -49,6 +44,9 @@ public class StudentController {
 
     @Resource
     private SchoolService schoolService;
+
+    @Resource
+    private ClstearelationService clstearelationService;
 
     @GetMapping("/list")
     @ApiOperation("获取学生信息列表")
@@ -148,7 +146,11 @@ public class StudentController {
             throw new NoEnoughAuthException(MessageConstant.NO_ENOUGH_AUTH);
         }
         LambdaQueryWrapper<Class> classLambdaQueryWrapper = new LambdaQueryWrapper();
-        classLambdaQueryWrapper.eq(Class::getTeacherId,accountId);
+        LambdaQueryWrapper<Clstearelation> clstearelationLambdaQueryWrapper = new LambdaQueryWrapper<>();
+        clstearelationLambdaQueryWrapper.eq(Clstearelation::getTeacherId,accountId);
+        List<Clstearelation> clstearelationList = clstearelationService.list(clstearelationLambdaQueryWrapper);
+        List<Long> classIds = clstearelationList.stream().map(Clstearelation::getClassId).collect(Collectors.toList());
+        classLambdaQueryWrapper.in(!CollUtil.isEmpty(classIds),Class::getClassId,classIds);
         List<Class> list = classService.list(classLambdaQueryWrapper);
         Set<Long> set = list.stream().map(Class::getClassId).collect(Collectors.toSet());
         LambdaQueryWrapper<Account> studentLambdaQueryWrapper = new LambdaQueryWrapper<>();
