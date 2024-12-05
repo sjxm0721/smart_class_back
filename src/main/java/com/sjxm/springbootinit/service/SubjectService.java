@@ -5,6 +5,7 @@ import com.sjxm.springbootinit.model.dto.SubjectQueryDTO;
 import com.sjxm.springbootinit.model.entity.Subject;
 import com.baomidou.mybatisplus.extension.service.IService;
 
+import javax.servlet.http.HttpServletResponse;
 import java.util.List;
 
 /**
@@ -19,4 +20,6 @@ public interface SubjectService extends IService<Subject> {
     void addOrUpdate(SubjectAddOrUpdateDTO subjectAddOrUpdateDTO);
 
     Subject info(Long subjectId);
+
+    void export(Long subjectId, HttpServletResponse response);
 }

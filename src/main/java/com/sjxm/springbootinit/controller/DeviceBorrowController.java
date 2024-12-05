@@ -7,6 +7,8 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.sjxm.springbootinit.constant.MessageConstant;
 import com.sjxm.springbootinit.exception.BorrowNotFoundException;
+import com.sjxm.springbootinit.exception.DeviceNotExistException;
+import com.sjxm.springbootinit.exception.ReturnDeviceStatusException;
 import com.sjxm.springbootinit.model.dto.BorrowApproveDTO;
 import com.sjxm.springbootinit.model.dto.BorrowSubmitDTO;
 import com.sjxm.springbootinit.model.dto.DeviceBorrowPageQueryDTO;
@@ -225,6 +227,30 @@ public class DeviceBorrowController {
     }
 
 
+    @PostMapping("/return/{borrowId}")
+    @ApiOperation("归还设备")
+    @Transactional
+    public Result returnDevice(@PathVariable Long borrowId){
+        Borrowdevice borrowdevice = borrowdeviceService.getById(borrowId);
+        if(borrowdevice==null){
+            throw new BorrowNotFoundException(MessageConstant.BORROW_NOT_FOUND_ERROR);
+        }
+        Integer status = borrowdevice.getStatus();
+        if(status!=1){
+            throw new ReturnDeviceStatusException(MessageConstant.RETURN_DEVICE_STATUS_ERROR);
+        }
+        Long deviceId = borrowdevice.getDeviceId();
+        Device device = deviceService.getById(deviceId);
+        if(device==null){
+            throw new DeviceNotExistException(MessageConstant.DEVICE_NOT_EXIST);
+        }
+        device.setInUse(0);
+        deviceService.updateById(device);
+        borrowdeviceService.removeById(borrowId);
+        return Result.success();
+    }
+
 
 
 }
+

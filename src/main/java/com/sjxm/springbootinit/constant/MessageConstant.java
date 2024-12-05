@@ -54,4 +54,6 @@ public class MessageConstant {
 
     public static final String BORROW_NOT_FOUND_ERROR = "对应设备申请未找到";
 
+    public static final String RETURN_DEVICE_STATUS_ERROR = "归还失败，设备状态异常";
+
 }

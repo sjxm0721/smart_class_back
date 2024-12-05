@@ -1,28 +1,32 @@
 package com.sjxm.springbootinit.service.impl;
 
 import cn.hutool.core.bean.BeanUtil;
+import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.sjxm.springbootinit.factory.ScoreStatusFactory;
 import com.sjxm.springbootinit.model.dto.SubjectAddOrUpdateDTO;
 import com.sjxm.springbootinit.model.dto.SubjectQueryDTO;
-import com.sjxm.springbootinit.model.entity.Account;
+import com.sjxm.springbootinit.model.entity.*;
 import com.sjxm.springbootinit.model.entity.Class;
-import com.sjxm.springbootinit.model.entity.Student;
-import com.sjxm.springbootinit.model.entity.Subject;
-import com.sjxm.springbootinit.service.AccountService;
-import com.sjxm.springbootinit.service.ClassService;
-import com.sjxm.springbootinit.service.StudentService;
-import com.sjxm.springbootinit.service.SubjectService;
+import com.sjxm.springbootinit.model.vo.SubjectGradeExportVO;
+import com.sjxm.springbootinit.service.*;
 import com.sjxm.springbootinit.mapper.SubjectMapper;
 import com.sjxm.springbootinit.utils.DateTransferUtil;
+import com.sjxm.springbootinit.utils.ExcelExportUtil;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 /**
@@ -39,7 +43,15 @@ public class SubjectServiceImpl extends ServiceImpl<SubjectMapper, Subject>
 //    private StudentService studentService;
 
     @Resource
+    @Lazy
+    private HomeworkService homeworkService;
+
+    @Resource
     private ClassService classService;
+
+    @Resource
+    @Lazy
+    private SubmitService submitService;
 
     @Resource
     private AccountService accountService;
@@ -100,6 +112,39 @@ public class SubjectServiceImpl extends ServiceImpl<SubjectMapper, Subject>
         log.info(subjectId.toString());
         Subject subject = this.getById(subjectId);
         return obj2VO1(subject);
+    }
+
+    @Override
+    public void export(Long subjectId, HttpServletResponse response) {
+        try {
+            List<SubjectGradeExportVO> exportVOS = new ArrayList<>();
+            Subject subject = this.getById(subjectId);
+            LambdaQueryWrapper<Homework> homeworkLambdaQueryWrapper = new LambdaQueryWrapper<>();
+            homeworkLambdaQueryWrapper.eq(Homework::getSubjectId,subjectId);
+            List<Homework> list = homeworkService.list(homeworkLambdaQueryWrapper);
+            Set<Long> homeworkIds = list.stream().map(Homework::getId).collect(Collectors.toSet());
+            if(!CollUtil.isEmpty(homeworkIds)){
+                LambdaQueryWrapper<Submit> submitLambdaQueryWrapper = new LambdaQueryWrapper<>();
+                submitLambdaQueryWrapper.in(Submit::getHomeworkId,homeworkIds).eq(Submit::getIsCorrected,1);
+                List<Submit> submitList = submitService.list(submitLambdaQueryWrapper);
+                for (Submit submit : submitList) {
+                    SubjectGradeExportVO subjectGradeExportVO = new SubjectGradeExportVO();
+                    Homework homework = homeworkService.getById(submit.getHomeworkId());
+                    subjectGradeExportVO.setHomeworkName(homework.getTitle());
+                    subjectGradeExportVO.setSubjectName(subject.getTitle());
+                    Account account = accountService.getById(submit.getStudentId());
+                    subjectGradeExportVO.setStudentName(account.getName());
+                    subjectGradeExportVO.setScore(submit.getScore());
+                    subjectGradeExportVO.setStatus(ScoreStatusFactory.getStatus(submit.getScore()));
+                    subjectGradeExportVO.setComment(submit.getComment());
+                    exportVOS.add(subjectGradeExportVO);
+                }
+            }
+            String fileName = subject.getTitle()+"学生成绩表";
+            ExcelExportUtil.exportExcel(response, fileName, exportVOS, SubjectGradeExportVO.class);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 }
 

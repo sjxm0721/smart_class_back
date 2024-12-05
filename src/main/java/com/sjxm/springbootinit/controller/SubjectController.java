@@ -11,6 +11,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
+import javax.servlet.http.HttpServletResponse;
 import java.util.List;
 
 /**
@@ -53,7 +54,7 @@ public class SubjectController {
 
     @GetMapping("/export")
     @PostMapping("导出学生课程数据")
-    public void export(Long subjectId){
-        
+    public void export(Long subjectId, HttpServletResponse response){
+        subjectService.export(subjectId,response);
     }
 }
